@@ -1,0 +1,150 @@
+{
+  "Navigation": {
+    "home": "Accueil",
+    "destination": "Destination",
+    "packages": "Forfaits",
+    "gallery": "Galerie",
+    "contact": "Contact"
+  },
+  "Hero": {
+    "weaving": "Tisser",
+    "dreamsInto": "Vos Rêves en",
+    "unforgettable": "Inoubliables",
+    "adventures": "Aventures",
+    "description": "Des voyages organisés à travers les paysages les plus enchanteurs de l'Inde — mêlant nature, culture et moments inoubliables en une aventure fluide.",
+    "bookNow": "Réserver maintenant",
+    "letsGo": "C'est parti",
+    "scrollDown": "Défiler vers le bas ↓"
+  },
+  "About": {
+    "label": "À propos",
+    "heading": "Façonner des voyages inoubliables à travers les paysages les plus époustouflants de l'Inde.",
+    "paragraph1prefix": "Chez ",
+    "brandName": "Wonderlust",
+    "paragraph1": ", nous pensons que le voyage est plus qu'une destination — c'est une histoire qui ne demande qu'à se dévoiler. Fondés avec une passion pour les merveilles du nord de l'Inde, nous organisons des expériences immersives qui allient aventure, culture et confort en toute fluidité.",
+    "paragraph2": "Des lacs tranquilles du Cachemire aux hauteurs majestueuses du Ladakh et aux rythmes spirituels de Rishikesh, chaque itinéraire est soigneusement conçu pour garantir authenticité, sécurité et souvenirs inoubliables.",
+    "paragraph3": "Grâce à des partenariats locaux de confiance, des guides experts et une planification méticuleuse, nous vous aidons à explorer l'Inde avec confiance et clarté — afin que vous puissiez vous concentrer sur le voyage, pas sur la logistique.",
+    "exploreMore": "En savoir plus"
+  },
+  "Destinations": {
+    "headingPrefix": "Explorez nos ",
+    "headingHighlight": "Destinations",
+    "subtitle": "Des voyages organisés à travers les paysages les plus époustouflants du nord de l'Inde.",
+    "kashmir": "Cachemire",
+    "kashmirDesc": "Sommets enneigés, lacs alpins et beauté intemporelle.",
+    "manali": "Manali",
+    "manaliDesc": "Aventure, vallées et charme hymalayen.",
+    "rishikesh": "Rishikesh",
+    "rishikeshDesc": "Rivières sacrées et sérénité spirituelle.",
+    "ladakh": "Ladakh",
+    "ladakhDesc": "Cols d'altitude et paysages spectaculaires."
+  },
+  "ExperiencePause": {
+    "headingLine1": "Tous les voyages ne changent pas votre position.",
+    "headingLine2": "Certains changent qui vous êtes.",
+    "description": "Prenez un moment. Choisissez votre chemin. Les montagnes vous attendent.",
+    "cta": "Commencez votre voyage"
+  },
+  "FeaturedPackages": {
+    "heading": "Expéditions Vedettes",
+    "subtitle": "Des voyages hymalayens triés sur le volet, conçus pour les explorateurs en quête de profondeur, de défi et de paysages inoubliables.",
+    "explore": "Explorer →",
+    "viewAll": "Voir toutes les expéditions"
+  },
+  "Contact": {
+    "heading": "Planifions votre voyage",
+    "subtitle": "Que vous recherchiez une aventure en haute altitude ou une retraite alpine paisible, notre équipe est prête à concevoir une expérience hymalayenne personnalisée pour vous.",
+    "fullName": "Nom complet",
+    "fullNamePlaceholder": "Jean Dupont",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "jean@example.com",
+    "message": "Parlez-nous de votre voyage de rêve",
+    "messagePlaceholder": "Destination, durée, préférences...",
+    "submit": "Envoyer la demande"
+  },
+  "Footer": {
+    "brand": "WANDERLUST",
+    "brandDescription": "Des expéditions hymalayennes organisées conçues pour les explorateurs en quête de paysages inoubliables et de voyages riches de sens.",
+    "brandAddress": "10 Gokul Baral Street, Calcutta - 700012.",
+    "explore": "Explorer",
+    "destinations": "Destinations",
+    "packages": "Forfaits",
+    "contact": "Contact",
+    "contactHeading": "Contact",
+    "stayInspired": "Restez inspiré",
+    "emailPlaceholder": "Votre e-mail",
+    "copyright": "Wonderlust Expeditions",
+    "tagline": "Conçu pour les explorateurs du Nord"
+  },
+  "BrowseAll": {
+    "browseAllPackages": "Parcourir tous les forfaits"
+  },
+  "PackageHero": {
+    "heading": "Forfaits d'expédition",
+    "subtitle": "Des voyages soigneusement organisés à travers les paysages les plus époustouflants du nord de l'Inde — conçus pour les explorateurs en quête de profondeur et de transformation."
+  },
+  "PackageGrid": {
+    "heading": "Tous les voyages",
+    "viewDetails": "Voir les détails →"
+  },
+  "PackagesCTA": {
+    "heading": "Prêt pour votre prochaine expédition ?",
+    "subtitle": "Que vous recherchiez une aventure en haute altitude ou une retraite alpine sereine, votre voyage commence ici."
+  },
+  "Membership": {
+    "heading": "Rejoignez le Cercle des Explorateurs",
+    "subtitle": "Débloquez des réservations prioritaires, des itinéraires exclusifs et des expériences de haute altitude réservées à nos membres premium.",
+    "cardHeading": "Adhésion Premium",
+    "benefit1": "✔ Réservation prioritaire sur les expéditions limitées",
+    "benefit2": "✔ Itinéraires de haute altitude réservés aux membres",
+    "benefit3": "✔ Consultant voyage dédié",
+    "benefit4": "✔ Récompenses de fidélité annuelles",
+    "price": "9 999 ₹ / an",
+    "cta": "Devenir membre"
+  },
+  "Gallery": {
+    "titlePrefix": "À travers l'",
+    "titleHighlight": "Objectif",
+    "description": "Des moments réels capturés au Cachemire, au Ladakh, à Manali et à Rishikesh — une fenêtre sur l'âme du nord de l'Inde.",
+    "visualStories": "Histoires visuelles",
+    "filterAll": "Tout",
+    "filterKashmir": "Cachemire",
+    "filterManali": "Manali",
+    "filterRishikesh": "Rishikesh",
+    "filterLadakh": "Ladakh"
+  },
+  "PackagesData": {
+    "ladakhExpedition": {
+      "title": "Expédition haute altitude au Ladakh",
+      "duration": "8 jours · 7 nuits",
+      "difficulty": "Avancé",
+      "altitude": "Altitude max : 17 582 pieds",
+      "price": "À partir de 42 999 ₹",
+      "description": "Un voyage inoubliable en haute altitude à travers les paysages spectaculaires du Ladakh. Traversez des cols de montagne, des monastères anciens et des villages hymalayens reculés tout en découvrant la beauté brute de la frontière nord de l'Inde."
+    },
+    "kashmirRetreat": {
+      "title": "Retraite alpine au Cachemire",
+      "duration": "6 jours · 5 nuits",
+      "difficulty": "Modéré",
+      "altitude": "Altitude max : 9 000 pieds",
+      "price": "À partir de 28 999 ₹",
+      "description": "Découvrez le charme alpin tranquille du Cachemire. Des balades sereines en shikara sur le lac Dal aux vallées enneigées et aux forêts de pins, cette retraite allie nature, culture et vie paisible à la montagne."
+    },
+    "manaliAdventure": {
+      "title": "Circuit aventure à Manali",
+      "duration": "5 jours · 4 nuits",
+      "difficulty": "Intermédiaire",
+      "altitude": "Altitude max : 13 050 pieds",
+      "price": "À partir de 24 499 ₹",
+      "description": "Conçu pour les amateurs de sensations fortes, ce circuit d'aventure vous emmène à travers la vallée de Solang, le col de Rohtang et des sentiers hymalayens cachés. Un mélange parfait d'adrénaline et de beauté pittoresque."
+    },
+    "rishikeshSpiritual": {
+      "title": "Escapade spirituelle à Rishikesh",
+      "duration": "4 jours · 3 nuits",
+      "difficulty": "Facile",
+      "altitude": "Altitude max : 1 200 pieds",
+      "price": "À partir de 18 999 ₹",
+      "description": "Un voyage régénérant au cœur spirituel de l'Inde. Explorez les ghats sacrés, assistez au Ganga Aarti du soir et détendez-vous avec des séances de yoga surplombant l'Himalaya."
+    }
+  }
+}

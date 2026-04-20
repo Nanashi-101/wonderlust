@@ -1,0 +1,150 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "destination": "Destination",
+    "packages": "Packages",
+    "gallery": "Gallery",
+    "contact": "Contact"
+  },
+  "Hero": {
+    "weaving": "Weaving",
+    "dreamsInto": "Your Dreams into",
+    "unforgettable": "Unforgettable",
+    "adventures": "Adventures",
+    "description": "Curated journeys across India's most enchanting landscapes — blending nature, culture, and unforgettable moments into one seamless adventure.",
+    "bookNow": "Book now",
+    "letsGo": "Lets go",
+    "scrollDown": "Scroll Down ↓"
+  },
+  "About": {
+    "label": "About",
+    "heading": "Crafting unforgettable journeys across India's most breathtaking landscapes.",
+    "paragraph1prefix": "At ",
+    "brandName": "Wonderlust",
+    "paragraph1": ", we believe travel is more than a destination — it's a story waiting to unfold. Founded with a passion for India's northern wonders, we curate immersive experiences that blend adventure, culture, and comfort seamlessly.",
+    "paragraph2": "From the tranquil lakes of Kashmir to the majestic heights of Ladakh and the spiritual rhythms of Rishikesh, every itinerary is thoughtfully designed to ensure authenticity, safety, and unforgettable memories.",
+    "paragraph3": "With trusted local partnerships, expert guides, and meticulous planning, we help you explore India with confidence and clarity — so you can focus on the journey, not the logistics.",
+    "exploreMore": "Explore more"
+  },
+  "Destinations": {
+    "headingPrefix": "Explore Our ",
+    "headingHighlight": "Destinations",
+    "subtitle": "Curated journeys across Northern India's most breathtaking landscapes.",
+    "kashmir": "Kashmir",
+    "kashmirDesc": "Snow peaks, alpine lakes & timeless beauty.",
+    "manali": "Manali",
+    "manaliDesc": "Adventure, valleys & Himalayan charm.",
+    "rishikesh": "Rishikesh",
+    "rishikeshDesc": "Sacred rivers & spiritual serenity.",
+    "ladakh": "Ladakh",
+    "ladakhDesc": "High passes & dramatic landscapes."
+  },
+  "ExperiencePause": {
+    "headingLine1": "Not all journeys change your location.",
+    "headingLine2": "Some change who you are.",
+    "description": "Take a moment. Choose your path. The mountains are waiting.",
+    "cta": "Begin Your Journey"
+  },
+  "FeaturedPackages": {
+    "heading": "Featured Expeditions",
+    "subtitle": "Handpicked Himalayan journeys designed for explorers seeking depth, challenge, and unforgettable landscapes.",
+    "explore": "Explore →",
+    "viewAll": "View All Expeditions"
+  },
+  "Contact": {
+    "heading": "Let's Plan Your Journey",
+    "subtitle": "Whether you are seeking high-altitude adventure or a peaceful alpine retreat, our team is ready to craft a personalized Himalayan experience for you.",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "John Doe",
+    "email": "Email Address",
+    "emailPlaceholder": "john@example.com",
+    "message": "Tell us about your dream trip",
+    "messagePlaceholder": "Destination, duration, preferences...",
+    "submit": "Send Inquiry"
+  },
+  "Footer": {
+    "brand": "WANDERLUST",
+    "brandDescription": "Curated Himalayan expeditions designed for explorers seeking unforgettable landscapes and meaningful journeys.",
+    "brandAddress": "10 Gokul Baral Street, Kolkata - 700012.",
+    "explore": "Explore",
+    "destinations": "Destinations",
+    "packages": "Packages",
+    "contact": "Contact",
+    "contactHeading": "Contact",
+    "stayInspired": "Stay Inspired",
+    "emailPlaceholder": "Your email",
+    "copyright": "Wonderlust Expeditions",
+    "tagline": "Designed for explorers of the North"
+  },
+  "BrowseAll": {
+    "browseAllPackages": "Browse All Packages"
+  },
+  "PackageHero": {
+    "heading": "Expedition Packages",
+    "subtitle": "Carefully curated journeys across Northern India's most breathtaking landscapes — crafted for explorers seeking depth and transformation."
+  },
+  "PackageGrid": {
+    "heading": "All Journeys",
+    "viewDetails": "View Details →"
+  },
+  "PackagesCTA": {
+    "heading": "Ready For Your Next Expedition?",
+    "subtitle": "Whether you seek high-altitude adventure or serene alpine retreats, your journey begins here."
+  },
+  "Membership": {
+    "heading": "Join The Explorer's Circle",
+    "subtitle": "Unlock priority bookings, exclusive itineraries, and curated high-altitude experiences reserved for our premium members.",
+    "cardHeading": "Premium Membership",
+    "benefit1": "✔ Priority booking on limited expeditions",
+    "benefit2": "✔ Members-only high-altitude routes",
+    "benefit3": "✔ Dedicated travel consultant",
+    "benefit4": "✔ Annual loyalty rewards",
+    "price": "₹9,999 / year",
+    "cta": "Become a Member"
+  },
+  "Gallery": {
+    "titlePrefix": "Through the ",
+    "titleHighlight": "Lens",
+    "description": "Real moments captured across Kashmir, Ladakh, Manali and Rishikesh — a window into Northern India's soul.",
+    "visualStories": "Visual Stories",
+    "filterAll": "All",
+    "filterKashmir": "Kashmir",
+    "filterManali": "Manali",
+    "filterRishikesh": "Rishikesh",
+    "filterLadakh": "Ladakh"
+  },
+  "PackagesData": {
+    "ladakhExpedition": {
+      "title": "Ladakh High-Altitude Expedition",
+      "duration": "8 Days · 7 Nights",
+      "difficulty": "Advanced",
+      "altitude": "Max Altitude: 17,582 ft",
+      "price": "Starting ₹42,999",
+      "description": "An unforgettable high-altitude journey across Ladakh’s dramatic landscapes. Traverse mountain passes, ancient monasteries, and remote Himalayan villages while experiencing the raw beauty of India’s northern frontier."
+    },
+    "kashmirRetreat": {
+      "title": "Kashmir Alpine Retreat",
+      "duration": "6 Days · 5 Nights",
+      "difficulty": "Moderate",
+      "altitude": "Max Altitude: 9,000 ft",
+      "price": "Starting ₹28,999",
+      "description": "Experience the tranquil alpine charm of Kashmir. From serene Dal Lake shikara rides to snow-dusted valleys and pine forests, this retreat blends nature, culture, and peaceful mountain living."
+    },
+    "manaliAdventure": {
+      "title": "Manali Adventure Circuit",
+      "duration": "5 Days · 4 Nights",
+      "difficulty": "Intermediate",
+      "altitude": "Max Altitude: 13,050 ft",
+      "price": "Starting ₹24,499",
+      "description": "Designed for thrill seekers, this adventure circuit takes you through Solang Valley, Rohtang Pass, and hidden Himalayan trails. A perfect mix of adrenaline and scenic beauty."
+    },
+    "rishikeshSpiritual": {
+      "title": "Rishikesh Spiritual Escape",
+      "duration": "4 Days · 3 Nights",
+      "difficulty": "Easy",
+      "altitude": "Max Altitude: 1,200 ft",
+      "price": "Starting ₹18,999",
+      "description": "A rejuvenating journey into the spiritual heart of India. Explore sacred ghats, attend evening Ganga Aarti, and unwind with yoga sessions overlooking the Himalayas."
+    }
+  }
+}
