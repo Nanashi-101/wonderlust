@@ -2,6 +2,7 @@ import Ladakh from "@/public/destination/Ladakh.png";
 import Kashmir from "@/public/destination/kashmir.png";
 import Manali from "@/public/destination/manali.png";
 import Rishikesh from "@/public/destination/rishikesh.png";
+import Puri from "@/public/destination/puri.png";
 
 /* ===================== */
 /* TYPES */
@@ -69,7 +70,7 @@ export const packages: TravelPackage[] = [
     duration: "6 Days · 5 Nights",
     difficulty: "Moderate",
     altitude: "Max Altitude: 9,000 ft",
-    price: "Starting ₹28,999",
+    price: "Starting ₹22,999",
     description:
       "Experience the tranquil alpine charm of Kashmir. From serene Dal Lake shikara rides to snow-dusted valleys and pine forests, this retreat blends nature, culture, and peaceful mountain living.",
     highlights: [
@@ -98,6 +99,26 @@ export const packages: TravelPackage[] = [
       "Old Manali Exploration",
       "Mountain Trekking Trails",
       "River Rafting in Beas",
+    ],
+  },
+  {
+    id: "puri-divine",
+    tKey: "puriDivine",
+    title: "Puri Divine and Coastal",
+    image: Puri,
+    category: "Spiritual",
+    duration: "6 Days · 5 Nights",
+    difficulty: "Easy",
+    altitude: "Max Altitude: 1,200 ft",
+    price: "Starting ₹11,111",
+    description:
+      "Discover the divine charm of Puri, where spirituality meets the sea. From sacred temples to serene beaches—your perfect escape awaits.",
+    highlights: [
+      "Jagannath Temple Visit",
+      "Golden Beach Relaxation",
+      "Konark Sun Temple Trip",
+      "Chilika Lake Excursion",
+      "Local Odia Cuisine",
     ],
   },
   {

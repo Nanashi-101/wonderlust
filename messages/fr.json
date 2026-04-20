@@ -145,6 +145,14 @@
       "altitude": "Altitude max : 1 200 pieds",
       "price": "À partir de 18 999 ₹",
       "description": "Un voyage régénérant au cœur spirituel de l'Inde. Explorez les ghats sacrés, assistez au Ganga Aarti du soir et détendez-vous avec des séances de yoga surplombant l'Himalaya."
+    },
+    "puriDivine": {
+      "title": "Puri Divin et Côtier",
+      "duration": "6 jours · 5 nuits",
+      "difficulty": "Facile",
+      "altitude": "Altitude max : 1 200 pieds",
+      "price": "À partir de 11 111 ₹",
+      "description": "Découvrez le charme divin de Puri, où la spiritualité rencontre la mer. Des temples sacrés aux plages sereines — votre escapade parfaite vous attend."
     }
   }
 }

@@ -1,12 +1,10 @@
 "use client";
 
-import gsap from "gsap";
+import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
-import ScrollTrigger from "gsap/ScrollTrigger";
-import Image from "next/image";
+import gsap from "gsap";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
-import { usePathname, useRouter, Link } from "@/i18n/navigation";
-import { useLocale, useTranslations } from "next-intl";
 export default function About() {
   const t = useTranslations('About');
   const sectionRef = useRef<HTMLDivElement>(null);
