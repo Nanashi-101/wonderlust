@@ -1,0 +1,150 @@
+{
+  "Navigation": {
+    "home": "Strona główna",
+    "destination": "Cel podróży",
+    "packages": "Pakiety",
+    "gallery": "Galeria",
+    "contact": "Kontakt"
+  },
+  "Hero": {
+    "weaving": "Tkanie",
+    "dreamsInto": "Twoich marzeń w",
+    "unforgettable": "Niezapomniane",
+    "adventures": "Przygody",
+    "description": "Starannie zaplanowane podróże po najbardziej urzekających krajobrazach Indii — łączące naturę, kulturę i niezapomniane chwile w jedną spójną przygodę.",
+    "bookNow": "Zarezerwuj teraz",
+    "letsGo": "Zaczynajmy",
+    "scrollDown": "Przewiń w dół ↓"
+  },
+  "About": {
+    "label": "O nas",
+    "heading": "Tworzenie niezapomnianych podróży po najbardziej zapierających dech w piersiach krajobrazach Indii.",
+    "paragraph1prefix": "W ",
+    "brandName": "Wonderlust",
+    "paragraph1": ", wierzymy, że podróż to coś więcej niż cel — to historia czekająca na rozwinięcie. Założeni z pasji do północnych cudów Indii, tworzymy wciągające doświadczenia, które płynnie łączą przygodę, kulturę i komfort.",
+    "paragraph2": "Od spokojnych jezior Kaszmiru po majestatyczne szczyty Ladakhu i duchowe rytmy Rishikesh, każdy plan podróży jest starannie zaprojektowany, aby zapewnić autentyczność, bezpieczeństwo i niezapomniane wspomnienia.",
+    "paragraph3": "Dzięki zaufanym lokalnym partnerstwom, eksperckim przewodnikom i skrupulatnemu planowaniu, pomagamy Ci odkrywać Indie z pewnością i jasnością — tak, abyś mógł skupić się na podróży, a nie na logistyce.",
+    "exploreMore": "Odkryj więcej"
+  },
+  "Destinations": {
+    "headingPrefix": "Odkryj nasze ",
+    "headingHighlight": "Miejsca",
+    "subtitle": "Starannie zaplanowane podróże po najbardziej zapierających dech w piersiach krajobrazach północnych Indii.",
+    "kashmir": "Kaszmir",
+    "kashmirDesc": "Śnieżne szczyty, alpejskie jeziora i ponadczasowe piękno.",
+    "manali": "Manali",
+    "manaliDesc": "Przygoda, doliny i himalajski urok.",
+    "rishikesh": "Rishikesh",
+    "rishikeshDesc": "Święte rzeki i duchowy spokój.",
+    "ladakh": "Ladakh",
+    "ladakhDesc": "Wysokie przełęcze i dramatyczne krajobrazy."
+  },
+  "ExperiencePause": {
+    "headingLine1": "Nie wszystkie podróże zmieniają Twoją lokalizację.",
+    "headingLine2": "Niektóre zmieniają to, kim jesteś.",
+    "description": "Zatrzymaj się na chwilę. Wybierz swoją ścieżkę. Góry czekają.",
+    "cta": "Rozpocznij swoją podróż"
+  },
+  "FeaturedPackages": {
+    "heading": "Wyróżnione Ekspedycje",
+    "subtitle": "Starannie wybrane himalajskie podróże zaprojektowane dla odkrywców szukających głębi, wyzwań i niezapomnianych krajobrazów.",
+    "explore": "Odkryj →",
+    "viewAll": "Zobacz wszystkie ekspedycje"
+  },
+  "Contact": {
+    "heading": "Zaplanujmy Twoją Podróż",
+    "subtitle": "Niezależnie od tego, czy szukasz przygody na dużej wysokości, czy spokojnego alpejskiego odpoczynku, nasz zespół jest gotowy, aby stworzyć dla Ciebie spersonalizowane himalajskie doświadczenie.",
+    "fullName": "Imię i Nazwisko",
+    "fullNamePlaceholder": "Jan Kowalski",
+    "email": "Adres E-mail",
+    "emailPlaceholder": "jan@example.com",
+    "message": "Opowiedz nam o swojej wymarzonej podróży",
+    "messagePlaceholder": "Miejsce docelowe, czas trwania, preferencje...",
+    "submit": "Wyślij Zapytanie"
+  },
+  "Footer": {
+    "brand": "WANDERLUST",
+    "brandDescription": "Starannie zaplanowane himalajskie ekspedycje zaprojektowane dla odkrywców szukających niezapomnianych krajobrazów i znaczących podróży.",
+    "brandAddress": "10 Gokul Baral Street, Kalkuta - 700012.",
+    "explore": "Odkryj",
+    "destinations": "Miejsca",
+    "packages": "Pakiety",
+    "contact": "Kontakt",
+    "contactHeading": "Kontakt",
+    "stayInspired": "Bądź Zainspirowany",
+    "emailPlaceholder": "Twój e-mail",
+    "copyright": "Wonderlust Expeditions",
+    "tagline": "Zaprojektowane dla odkrywców Północy"
+  },
+  "BrowseAll": {
+    "browseAllPackages": "Przeglądaj wszystkie pakiety"
+  },
+  "PackageHero": {
+    "heading": "Pakiety Ekspedycji",
+    "subtitle": "Starannie zaplanowane podróże po najbardziej zapierających dech w piersiach krajobrazach północnych Indii — stworzone dla odkrywców szukających głębi i transformacji."
+  },
+  "PackageGrid": {
+    "heading": "Wszystkie Podróże",
+    "viewDetails": "Zobacz szczegóły →"
+  },
+  "PackagesCTA": {
+    "heading": "Gotowy na kolejną ekspedycję?",
+    "subtitle": "Niezależnie od tego, czy szukasz przygody na dużej wysokości, czy spokojnych alpejskich rekolekcji, Twoja podróż zaczyna się tutaj."
+  },
+  "Membership": {
+    "heading": "Dołącz do Kręgu Odkrywców",
+    "subtitle": "Odblokuj priorytetowe rezerwacje, ekskluzywne trasy i starannie zaplanowane doświadczenia na dużych wysokościach, zarezerwowane dla naszych członków premium.",
+    "cardHeading": "Członkostwo Premium",
+    "benefit1": "✔ Priorytetowa rezerwacja na limitowane ekspedycje",
+    "benefit2": "✔ Trasy na dużych wysokościach tylko dla członków",
+    "benefit3": "✔ Dedykowany konsultant ds. podróży",
+    "benefit4": "✔ Coroczne nagrody lojalnościowe",
+    "price": "9 999 ₹ / rok",
+    "cta": "Zostań Członkiem"
+  },
+  "Gallery": {
+    "titlePrefix": "Przez ",
+    "titleHighlight": "Obiektyw",
+    "description": "Prawdziwe momenty uchwycone w Kaszmirze, Ladakhu, Manali i Rishikesh — okno do duszy północnych Indii.",
+    "visualStories": "Historie Wizualne",
+    "filterAll": "Wszystkie",
+    "filterKashmir": "Kaszmir",
+    "filterManali": "Manali",
+    "filterRishikesh": "Rishikesh",
+    "filterLadakh": "Ladakh"
+  },
+  "PackagesData": {
+    "ladakhExpedition": {
+      "title": "Ekspedycja Wysokogórska Ladakh",
+      "duration": "8 dni · 7 nocy",
+      "difficulty": "Zaawansowany",
+      "altitude": "Maks. wysokość: 17 582 stóp",
+      "price": "Od 42 999 ₹",
+      "description": "Niezapomniana podróż wysokogórska przez dramatyczne krajobrazy Ladakhu. Przemierzaj górskie przełęcze, starożytne klasztory i odległe himalajskie wioski, doświadczając surowego piękna północnej granicy Indii."
+    },
+    "kashmirRetreat": {
+      "title": "Alpejskie Rekolekcje w Kaszmirze",
+      "duration": "6 dni · 5 nocy",
+      "difficulty": "Umiarkowany",
+      "altitude": "Maks. wysokość: 9 000 stóp",
+      "price": "Od 28 999 ₹",
+      "description": "Doświadcz spokojnego alpejskiego uroku Kaszmiru. Od spokojnych przejażdżek shikarą po jeziorze Dal po ośnieżone doliny i lasy sosnowe, te rekolekcje łączą naturę, kulturę i spokojne życie w górach."
+    },
+    "manaliAdventure": {
+      "title": "Obwód Przygodowy Manali",
+      "duration": "5 dni · 4 noce",
+      "difficulty": "Średniozaawansowany",
+      "altitude": "Maks. wysokość: 13 050 stóp",
+      "price": "Od 24 499 ₹",
+      "description": "Zaprojektowany dla poszukiwaczy mocnych wrażeń, ten obwód przygodowy prowadzi przez dolinę Solang, przełęcz Rohtang i ukryte himalajskie szlaki. Idealna mieszanka adrenaliny i malowniczego piękna."
+    },
+    "rishikeshSpiritual": {
+      "title": "Duchowa Ucieczka do Rishikesh",
+      "duration": "4 dni · 3 noce",
+      "difficulty": "Łatwy",
+      "altitude": "Maks. wysokość: 1 200 stóp",
+      "price": "Od 18 999 ₹",
+      "description": "Odmładzająca podróż do duchowego serca Indii. Odkrywaj święte ghaty, uczestnicz w wieczornym Ganga Aarti i zrelaksuj się podczas sesji jogi z widokiem na Himalaje."
+    }
+  }
+}
