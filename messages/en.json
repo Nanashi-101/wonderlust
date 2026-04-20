@@ -127,7 +127,7 @@
       "duration": "6 Days · 5 Nights",
       "difficulty": "Moderate",
       "altitude": "Max Altitude: 9,000 ft",
-      "price": "Starting ₹28,999",
+      "price": "Starting ₹22,999",
       "description": "Experience the tranquil alpine charm of Kashmir. From serene Dal Lake shikara rides to snow-dusted valleys and pine forests, this retreat blends nature, culture, and peaceful mountain living."
     },
     "manaliAdventure": {
@@ -145,6 +145,14 @@
       "altitude": "Max Altitude: 1,200 ft",
       "price": "Starting ₹18,999",
       "description": "A rejuvenating journey into the spiritual heart of India. Explore sacred ghats, attend evening Ganga Aarti, and unwind with yoga sessions overlooking the Himalayas."
+    },
+    "puriDivine": {
+      "title": "Puri Divine and Coastal",
+      "duration": "6 Days · 5 Nights",
+      "difficulty": "Easy",
+      "altitude": "Max Altitude: 1,200 ft",
+      "price": "Starting ₹11,111",
+      "description": "Discover the divine charm of Puri, where spirituality meets the sea. From sacred temples to serene beaches—your perfect escape awaits."
     }
   }
 }
