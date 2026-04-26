@@ -10,15 +10,19 @@ export default function About() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    gsap.from(sectionRef.current, {
-      opacity: 0,
-      y: 80,
-      duration: 1,
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top 80%",
-      },
-    });
+    const ctx = gsap.context(() => {
+      gsap.from(sectionRef.current, {
+        opacity: 0,
+        y: 80,
+        duration: 1,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (

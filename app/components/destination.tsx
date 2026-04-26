@@ -63,8 +63,6 @@ export default function Destinations() {
   ];
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
     const ctx = gsap.context(() => {
       gsap.from(".destination-card", {
         opacity: 0,
@@ -102,6 +100,7 @@ export default function Destinations() {
             <div
               key={i}
               className="group relative overflow-hidden rounded-3xl bg-neutral-900 cursor-pointer"
+              onClick={() => router.push(`/gallery`)}
             >
               {/* Image */}
               <div className="relative aspect-4/3 rounded-3xl overflow-hidden">
@@ -117,7 +116,7 @@ export default function Destinations() {
               </div>
 
               {/* Soft cinematic overlay */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-700 group-hover:from-black/80" onClick={() => window.location.href = `/${locale}/gallery`} />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-700 group-hover:from-black/80" />
 
               {/* Content */}
               <div className="absolute bottom-12 left-12 right-12 text-white">

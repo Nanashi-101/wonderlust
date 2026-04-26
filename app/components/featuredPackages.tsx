@@ -25,8 +25,6 @@ export default function FeaturedPackages() {
   };
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>(".package-card");
 
