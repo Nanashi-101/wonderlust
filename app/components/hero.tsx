@@ -21,17 +21,19 @@ export default function Hero() {
   const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    gsap.to(bgRef.current, {
-      y: 200,
-      scrollTrigger: {
-        trigger: bgRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
+    const ctx = gsap.context(() => {
+      gsap.to(bgRef.current, {
+        y: 200,
+        scrollTrigger: {
+          trigger: bgRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
     });
+
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -69,10 +71,9 @@ export default function Hero() {
               {" "}
               {t('unforgettable')}{" "}
             </span>{" "}
-            <br /> {t('adventures')}{""}{""}
-            <span className="inline-block size-3 bg-cyan-400 rounded-full p-1 ml-1"></span>{""}
-            <span className="inline-block size-3 bg-cyan-400 rounded-full p-1 ml-1"></span>{""}
-            <span className="inline-block size-3 bg-cyan-400 rounded-full p-1 ml-1"></span>{""}
+            <span className="inline-block size-3 bg-cyan-400 rounded-full p-1 ml-1"></span>
+            <span className="inline-block size-3 bg-cyan-400 rounded-full p-1 ml-1"></span>
+            <span className="inline-block size-3 bg-cyan-400 rounded-full p-1 ml-1"></span>
           </motion.h1>{" "}
           <motion.p
             initial={{ opacity: 0, y: 30 }}

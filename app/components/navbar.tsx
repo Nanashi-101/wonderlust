@@ -1,12 +1,33 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
+import { LoginLink, LogoutLink, RegisterLink, useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "./LanguageSwitcher";
+import React from "react";
+import prisma from "../lib/db";
+import LoggedInMenu from "./loggedInMenu";
 
-export default function Navbar() {
+export default async function Navbar() {
   const t = useTranslations('Navigation');
+  const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
+
+  let userData = null
+  if(user || isAuthenticated){
+    userData = await prisma.user.findUnique({
+      where: {
+        id: user?.id,
+      },
+      select:{
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        profileImage: true,
+      }
+    })
+  }
 
   return (
     <motion.nav
@@ -50,7 +71,34 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <LanguageSwitcher variant="transparent" />
+        <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitcher variant="transparent" />
+          {!isLoading ? (
+            isAuthenticated ? (
+              <React.Fragment>
+                {user?.picture ? (
+                  <>
+                    <img src={user.picture} alt="User" className="w-10 h-10 rounded-full" />
+                    {/* <LoggedInMenu /> */}
+                  </>
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gray-500" />
+                )}
+                <LogoutLink className="rounded-full bg-blue-500 px-4 py-2 text-white">Logout</LogoutLink>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <LoginLink className="rounded-full bg-blue-500 px-4 py-2 text-white">Login</LoginLink>
+                <RegisterLink className="rounded-full bg-blue-500 px-4 py-2 text-white">
+                  Sign Up
+                </RegisterLink>
+              </React.Fragment>
+            )
+          ) : (
+            <div className="w-20 h-10 animate-pulse bg-gray-200/20 rounded-full" />
+          )}
+        </div>
+
       </div>
     </motion.nav>
   );

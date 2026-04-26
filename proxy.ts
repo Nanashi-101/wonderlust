@@ -1,9 +1,15 @@
+import { NextRequest } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 
-export default createMiddleware(routing);
+const handleI18nRouting = createMiddleware(routing);
+
+export async function proxy(request: NextRequest) {
+  return handleI18nRouting(request);
+}
 
 export const config = {
   // Match only internationalized pathnames
   matcher: ['/', '/(en|hi|bn|pl|fr)/:path*']
 };
+
