@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { LoginLink, RegisterLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import type { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
 import { User, LogOut, LogIn, UserPlus, Package, CalendarDays, Settings, ChevronDown, Menu, X } from "lucide-react";
 import {
@@ -121,7 +121,7 @@ export default function NavbarClient({ user, isAuth }: NavbarClientProps) {
                 </DropdownMenu>
               ) : (
                 <div className="flex items-center gap-4">
-                  <LoginLink className="group relative h-10 w-24 overflow-hidden rounded-full border border-white/20 bg-white/5 hover:bg-white/10 transition-colors">
+                  <a href="/api/auth/login" className="group relative h-10 w-24 overflow-hidden rounded-full border border-white/20 bg-white/5 hover:bg-white/10 transition-colors block">
                     <div className="relative h-full w-full">
                       <span className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">
                         {t('login')}
@@ -130,8 +130,8 @@ export default function NavbarClient({ user, isAuth }: NavbarClientProps) {
                         {t('login')}
                       </span>
                     </div>
-                  </LoginLink>
-                  <RegisterLink className="group relative h-10 w-32 overflow-hidden rounded-full bg-cyan-600 hover:bg-cyan-500 transition-colors shadow-lg shadow-cyan-900/20">
+                  </a>
+                  <a href="/api/auth/register" className="group relative h-10 w-32 overflow-hidden rounded-full bg-cyan-600 hover:bg-cyan-500 transition-colors shadow-lg shadow-cyan-900/20 block">
                     <div className="relative h-full w-full">
                       <span className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">
                         {t('register')}
@@ -140,7 +140,7 @@ export default function NavbarClient({ user, isAuth }: NavbarClientProps) {
                         Let's Go!
                       </span>
                     </div>
-                  </RegisterLink>
+                  </a>
                 </div>
               )}
             </div>
@@ -220,12 +220,12 @@ export default function NavbarClient({ user, isAuth }: NavbarClientProps) {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-4">
-                  <LoginLink className="w-full py-4 rounded-2xl bg-white/5 text-white text-center font-bold border border-white/10">
+                  <a href="/api/auth/login" className="w-full py-4 rounded-2xl bg-white/5 text-white text-center font-bold border border-white/10">
                     {t('login')}
-                  </LoginLink>
-                  <RegisterLink className="w-full py-4 rounded-2xl bg-cyan-600 text-white text-center font-bold">
+                  </a>
+                  <a href="/api/auth/register" className="w-full py-4 rounded-2xl bg-cyan-600 text-white text-center font-bold">
                     {t('register')}
-                  </RegisterLink>
+                  </a>
                 </div>
               )}
               <div className="flex justify-center pt-6">
