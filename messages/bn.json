@@ -4,7 +4,13 @@
     "destination": "গন্তব্য",
     "packages": "প্যাকেজ",
     "gallery": "গ্যালারি",
-    "contact": "যোগাযোগ"
+    "contact": "যোগাযোগ",
+    "welcome": "স্বাগতম",
+    "login": "লগইন",
+    "register": "সাইন আপ",
+    "logout": "লগ আউট",
+    "myPackages": "আমার প্যাকেজ",
+    "myBookings": "আমার বুকিং"
   },
   "Hero": {
     "weaving": "বুনে",

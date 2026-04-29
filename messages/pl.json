@@ -4,7 +4,13 @@
     "destination": "Cel podróży",
     "packages": "Pakiety",
     "gallery": "Galeria",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "welcome": "Witaj",
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "logout": "Wyloguj się",
+    "myPackages": "Moje pakiety",
+    "myBookings": "Moje rezerwacje"
   },
   "Hero": {
     "weaving": "Tkanie",
