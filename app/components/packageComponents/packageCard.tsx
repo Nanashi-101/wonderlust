@@ -4,6 +4,7 @@ import Image from "next/image";
 
 interface PackageCardProps {
   pkg: {
+    id: string;
     tKey: string;
     title: string;
     image: string;
