@@ -4,7 +4,13 @@
     "destination": "Destination",
     "packages": "Packages",
     "gallery": "Gallery",
-    "contact": "Contact"
+    "contact": "Contact",
+    "welcome": "Welcome",
+    "login": "Login",
+    "register": "Sign up",
+    "logout": "Logout",
+    "myPackages": "My Packages",
+    "myBookings": "My Bookings"
   },
   "Hero": {
     "weaving": "Weaving",

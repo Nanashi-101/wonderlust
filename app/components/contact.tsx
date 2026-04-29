@@ -43,7 +43,7 @@ export default function Contact() {
       <div className="container mx-auto px-8 max-w-6xl">
         {/* Heading */}
         <div className="contact-fade mb-20 max-w-2xl">
-          <h2 className="text-5xl font-semibold tracking-tight text-cyan-400">
+          <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-cyan-400">
             {t('heading')}
           </h2>
           <p className="mt-6 text-lg text-neutral-600 leading-relaxed">

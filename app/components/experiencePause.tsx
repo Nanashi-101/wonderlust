@@ -47,7 +47,7 @@ export default function ExperiencePause() {
           </div>
 
           {/* Content */}
-          <div className="relative z-10 flex-1 p-16 md:p-20">
+          <div className="relative z-10 flex-1 p-8 sm:p-16 md:p-20 text-center md:text-left">
             <h2 className="text-4xl md:text-5xl font-semibold leading-tight">
               {t('headingLine1')}
               <br />
