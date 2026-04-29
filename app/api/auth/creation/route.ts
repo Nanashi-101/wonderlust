@@ -14,5 +14,6 @@ export async function GET() {
   // const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   // if (!dbUser) { await prisma.user.create({ data: { id: user.id, email: user.email } }); }
 
-  return NextResponse.redirect("http://localhost:3000/en");
+  const siteUrl = process.env.KINDE_SITE_URL ?? "http://localhost:3000";
+  return NextResponse.redirect(`${siteUrl}/en`);
 }
