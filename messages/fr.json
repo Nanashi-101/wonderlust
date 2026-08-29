@@ -4,7 +4,13 @@
     "destination": "Destination",
     "packages": "Forfaits",
     "gallery": "Galerie",
-    "contact": "Contact"
+    "contact": "Contact",
+    "welcome": "Bienvenue",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "logout": "Déconnexion",
+    "myPackages": "Mes forfaits",
+    "myBookings": "Mes réservations"
   },
   "Hero": {
     "weaving": "Tisser",
@@ -124,7 +130,7 @@
     },
     "kashmirRetreat": {
       "title": "Retraite alpine au Cachemire",
-      "duration": "6 jours · 5 nuits",
+      "duration": "13 jours · 12 nuits",
       "difficulty": "Modéré",
       "altitude": "Altitude max : 9 000 pieds",
       "price": "À partir de 28 999 ₹",

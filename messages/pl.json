@@ -4,7 +4,13 @@
     "destination": "Cel podróży",
     "packages": "Pakiety",
     "gallery": "Galeria",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "welcome": "Witaj",
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "logout": "Wyloguj się",
+    "myPackages": "Moje pakiety",
+    "myBookings": "Moje rezerwacje"
   },
   "Hero": {
     "weaving": "Tkanie",
@@ -124,7 +130,7 @@
     },
     "kashmirRetreat": {
       "title": "Alpejskie Rekolekcje w Kaszmirze",
-      "duration": "6 dni · 5 nocy",
+      "duration": "13 dni · 12 nocy",
       "difficulty": "Umiarkowany",
       "altitude": "Maks. wysokość: 9 000 stóp",
       "price": "Od 28 999 ₹",
