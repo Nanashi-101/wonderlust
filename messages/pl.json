@@ -118,47 +118,5 @@
     "filterManali": "Manali",
     "filterRishikesh": "Rishikesh",
     "filterLadakh": "Ladakh"
-  },
-  "PackagesData": {
-    "ladakhExpedition": {
-      "title": "Ekspedycja Wysokogórska Ladakh",
-      "duration": "8 dni · 7 nocy",
-      "difficulty": "Zaawansowany",
-      "altitude": "Maks. wysokość: 17 582 stóp",
-      "price": "Od 42 999 ₹",
-      "description": "Niezapomniana podróż wysokogórska przez dramatyczne krajobrazy Ladakhu. Przemierzaj górskie przełęcze, starożytne klasztory i odległe himalajskie wioski, doświadczając surowego piękna północnej granicy Indii."
-    },
-    "kashmirRetreat": {
-      "title": "Alpejskie Rekolekcje w Kaszmirze",
-      "duration": "13 dni · 12 nocy",
-      "difficulty": "Umiarkowany",
-      "altitude": "Maks. wysokość: 9 000 stóp",
-      "price": "Od 28 999 ₹",
-      "description": "Doświadcz spokojnego alpejskiego uroku Kaszmiru. Od spokojnych przejażdżek shikarą po jeziorze Dal po ośnieżone doliny i lasy sosnowe, te rekolekcje łączą naturę, kulturę i spokojne życie w górach."
-    },
-    "manaliAdventure": {
-      "title": "Obwód Przygodowy Manali",
-      "duration": "5 dni · 4 noce",
-      "difficulty": "Średniozaawansowany",
-      "altitude": "Maks. wysokość: 13 050 stóp",
-      "price": "Od 24 499 ₹",
-      "description": "Zaprojektowany dla poszukiwaczy mocnych wrażeń, ten obwód przygodowy prowadzi przez dolinę Solang, przełęcz Rohtang i ukryte himalajskie szlaki. Idealna mieszanka adrenaliny i malowniczego piękna."
-    },
-    "rishikeshSpiritual": {
-      "title": "Duchowa Ucieczka do Rishikesh",
-      "duration": "4 dni · 3 noce",
-      "difficulty": "Łatwy",
-      "altitude": "Maks. wysokość: 1 200 stóp",
-      "price": "Od 18 999 ₹",
-      "description": "Odmładzająca podróż do duchowego serca Indii. Odkrywaj święte ghaty, uczestnicz w wieczornym Ganga Aarti i zrelaksuj się podczas sesji jogi z widokiem na Himalaje."
-    },
-    "puriDivine": {
-      "title": "Puri Boskie i Przybrzeżne",
-      "duration": "6 dni · 5 nocy",
-      "difficulty": "Łatwy",
-      "altitude": "Maks. wysokość: 1 200 stóp",
-      "price": "Od 11 111 ₹",
-      "description": "Odkryj boski urok Puri, gdzie duchowość spotyka się z morzem. Od świętych świątyń po spokojne plaże — Twoja idealna ucieczka czeka."
-    }
   }
 }

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import type { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
-import { User, LogOut, LogIn, UserPlus, Package, CalendarDays, Settings, ChevronDown, Menu, X } from "lucide-react";
+import { User, LogOut, LogIn, UserPlus, Package, CalendarDays, Settings, ChevronDown, Menu, X, PlusCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,6 +44,7 @@ export default function NavbarClient({ user, isAuth }: NavbarClientProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
+
         <div className="mx-auto flex items-center xl:text-xl justify-between">
           <Link href="/" className="cursor-pointer text-xl font-semibold tracking-[0.05em] text-white">
             WANDER<span className="text-cyan-500">LUST</span>
@@ -94,6 +95,12 @@ export default function NavbarClient({ user, isAuth }: NavbarClientProps) {
                       {t('welcome')}, {user?.given_name}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-neutral-100" />
+                    <DropdownMenuItem asChild className="cursor-pointer rounded-lg py-2.5 focus:bg-cyan-50 focus:text-cyan-600">
+                      <Link href="/admin" className="flex items-center w-full text-cyan-600 font-semibold">
+                        <PlusCircle className="w-4 h-4 mr-3 text-cyan-600" />
+                        <span>Admin Console</span>
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem asChild className="cursor-pointer rounded-lg py-2.5 focus:bg-cyan-50 focus:text-cyan-600">
                       <Link href="/packages" className="flex items-center w-full">
                         <Package className="w-4 h-4 mr-3" />
