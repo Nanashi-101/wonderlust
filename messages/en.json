@@ -118,47 +118,5 @@
     "filterManali": "Manali",
     "filterRishikesh": "Rishikesh",
     "filterLadakh": "Ladakh"
-  },
-  "PackagesData": {
-    "ladakhExpedition": {
-      "title": "Ladakh High-Altitude Expedition",
-      "duration": "8 Days · 7 Nights",
-      "difficulty": "Advanced",
-      "altitude": "Max Altitude: 17,582 ft",
-      "price": "Starting ₹42,999",
-      "description": "An unforgettable high-altitude journey across Ladakh’s dramatic landscapes. Traverse mountain passes, ancient monasteries, and remote Himalayan villages while experiencing the raw beauty of India’s northern frontier."
-    },
-    "kashmirRetreat": {
-      "title": "Kashmir Alpine Retreat",
-      "duration": "13 Days · 12 Nights",
-      "difficulty": "Moderate",
-      "altitude": "Max Altitude: 9,000 ft",
-      "price": "Starting ₹22,999",
-      "description": "Experience the tranquil alpine charm of Kashmir. From serene Dal Lake shikara rides to snow-dusted valleys and pine forests, this retreat blends nature, culture, and peaceful mountain living."
-    },
-    "manaliAdventure": {
-      "title": "Manali Adventure Circuit",
-      "duration": "5 Days · 4 Nights",
-      "difficulty": "Intermediate",
-      "altitude": "Max Altitude: 13,050 ft",
-      "price": "Starting ₹24,499",
-      "description": "Designed for thrill seekers, this adventure circuit takes you through Solang Valley, Rohtang Pass, and hidden Himalayan trails. A perfect mix of adrenaline and scenic beauty."
-    },
-    "rishikeshSpiritual": {
-      "title": "Rishikesh Spiritual Escape",
-      "duration": "4 Days · 3 Nights",
-      "difficulty": "Easy",
-      "altitude": "Max Altitude: 1,200 ft",
-      "price": "Starting ₹18,999",
-      "description": "A rejuvenating journey into the spiritual heart of India. Explore sacred ghats, attend evening Ganga Aarti, and unwind with yoga sessions overlooking the Himalayas."
-    },
-    "puriDivine": {
-      "title": "Puri Divine and Coastal",
-      "duration": "6 Days · 5 Nights",
-      "difficulty": "Easy",
-      "altitude": "Max Altitude: 1,200 ft",
-      "price": "Starting ₹11,111",
-      "description": "Discover the divine charm of Puri, where spirituality meets the sea. From sacred temples to serene beaches—your perfect escape awaits."
-    }
   }
 }

@@ -118,47 +118,5 @@
     "filterManali": "Manali",
     "filterRishikesh": "Rishikesh",
     "filterLadakh": "Ladakh"
-  },
-  "PackagesData": {
-    "ladakhExpedition": {
-      "title": "Expédition haute altitude au Ladakh",
-      "duration": "8 jours · 7 nuits",
-      "difficulty": "Avancé",
-      "altitude": "Altitude max : 17 582 pieds",
-      "price": "À partir de 42 999 ₹",
-      "description": "Un voyage inoubliable en haute altitude à travers les paysages spectaculaires du Ladakh. Traversez des cols de montagne, des monastères anciens et des villages hymalayens reculés tout en découvrant la beauté brute de la frontière nord de l'Inde."
-    },
-    "kashmirRetreat": {
-      "title": "Retraite alpine au Cachemire",
-      "duration": "13 jours · 12 nuits",
-      "difficulty": "Modéré",
-      "altitude": "Altitude max : 9 000 pieds",
-      "price": "À partir de 28 999 ₹",
-      "description": "Découvrez le charme alpin tranquille du Cachemire. Des balades sereines en shikara sur le lac Dal aux vallées enneigées et aux forêts de pins, cette retraite allie nature, culture et vie paisible à la montagne."
-    },
-    "manaliAdventure": {
-      "title": "Circuit aventure à Manali",
-      "duration": "5 jours · 4 nuits",
-      "difficulty": "Intermédiaire",
-      "altitude": "Altitude max : 13 050 pieds",
-      "price": "À partir de 24 499 ₹",
-      "description": "Conçu pour les amateurs de sensations fortes, ce circuit d'aventure vous emmène à travers la vallée de Solang, le col de Rohtang et des sentiers hymalayens cachés. Un mélange parfait d'adrénaline et de beauté pittoresque."
-    },
-    "rishikeshSpiritual": {
-      "title": "Escapade spirituelle à Rishikesh",
-      "duration": "4 jours · 3 nuits",
-      "difficulty": "Facile",
-      "altitude": "Altitude max : 1 200 pieds",
-      "price": "À partir de 18 999 ₹",
-      "description": "Un voyage régénérant au cœur spirituel de l'Inde. Explorez les ghats sacrés, assistez au Ganga Aarti du soir et détendez-vous avec des séances de yoga surplombant l'Himalaya."
-    },
-    "puriDivine": {
-      "title": "Puri Divin et Côtier",
-      "duration": "6 jours · 5 nuits",
-      "difficulty": "Facile",
-      "altitude": "Altitude max : 1 200 pieds",
-      "price": "À partir de 11 111 ₹",
-      "description": "Découvrez le charme divin de Puri, où la spiritualité rencontre la mer. Des temples sacrés aux plages sereines — votre escapade parfaite vous attend."
-    }
   }
 }
