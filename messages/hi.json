@@ -4,7 +4,13 @@
     "destination": "गंतव्य",
     "packages": "पैकेज",
     "gallery": "गैलरी",
-    "contact": "संपर्क"
+    "contact": "संपर्क",
+    "welcome": "स्वागत है",
+    "login": "लॉगिन",
+    "register": "साइन अप",
+    "logout": "लॉगआउट",
+    "myPackages": "मेरे पैकेज",
+    "myBookings": "मेरी बुकिंग"
   },
   "Hero": {
     "weaving": "बुनते",
@@ -124,7 +130,7 @@
     },
     "kashmirRetreat": {
       "title": "कश्मीर अल्पाइन रिट्रीट",
-      "duration": "6 दिन · 5 रातें",
+      "duration": "13 दिन · 12 रातें",
       "difficulty": "मध्यम",
       "altitude": "अधिकतम ऊंचाई: 9,000 फीट",
       "price": "शुरुआत ₹28,999",

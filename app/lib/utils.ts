@@ -67,7 +67,7 @@ export const packages: TravelPackage[] = [
     title: "Kashmir Alpine Retreat",
     image: Kashmir,
     category: "Retreat",
-    duration: "6 Days · 5 Nights",
+    duration: "13 Days · 12 Nights",
     difficulty: "Moderate",
     altitude: "Max Altitude: 9,000 ft",
     price: "Starting ₹22,999",

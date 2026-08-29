@@ -4,6 +4,7 @@ import Image from "next/image";
 
 interface PackageCardProps {
   pkg: {
+    id: string;
     tKey: string;
     title: string;
     image: string;
@@ -14,6 +15,7 @@ interface PackageCardProps {
   };
 }
 
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 export default function PackageCard({ pkg }: PackageCardProps) {
@@ -62,9 +64,12 @@ export default function PackageCard({ pkg }: PackageCardProps) {
             {t_data(`${pkg.tKey}.price`)}
           </span>
 
-          <button className="text-sm font-medium tracking-wide transition-transform duration-300 group-hover:translate-x-1">
+          <Link 
+            href={`/packages/${pkg.id}`}
+            className="text-sm font-medium tracking-wide transition-all duration-300 group-hover:translate-x-1 group-hover:text-cyan-600 flex items-center gap-1"
+          >
             {t('viewDetails')}
-          </button>
+          </Link>
         </div>
       </div>
     </div>
