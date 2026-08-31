@@ -83,8 +83,9 @@ export default async function PackageDetails({
                 Expedition Highlights
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pkg.highlights.map((highlight, index) => (
+                {pkg.highlights?.map((highlight: string, index: number) => (
                   <div
+
                     key={index}
                     className="flex items-start gap-3 p-4 bg-white rounded-2xl shadow-sm border border-neutral-100"
                   >
