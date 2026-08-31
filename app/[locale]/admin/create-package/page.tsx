@@ -5,6 +5,7 @@ import BgPicture from "@/public/bgpiclogo.png";
 import AdminHeader from "@/app/components/admin/AdminHeader";
 import AdminFooter from "@/app/components/admin/AdminFooter";
 import CreatorStudioWizard from "@/app/components/admin/CreatorStudioWizard";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 
 export default async function AdminCreatePackagePage({
   params,
@@ -17,6 +18,11 @@ export default async function AdminCreatePackagePage({
   const authenticated = await isAuthenticated();
   if (!authenticated) {
     redirect(`/api/auth/login`);
+  }
+
+  const admin = await getCurrentAdmin();
+  if (!admin) {
+    redirect(`/${locale}`);
   }
 
   return (

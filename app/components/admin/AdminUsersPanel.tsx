@@ -54,15 +54,15 @@ export default function AdminUsersPanel({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-cyan-600" /> Admin Team &
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> Admin Team &
             Access Control
           </h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Grant or revoke admin access roles —{" "}
-            <span className="font-semibold text-slate-700">
+            <span className="font-semibold text-slate-700 dark:text-slate-300">
               {admins.length} admins
             </span>
           </p>
@@ -86,14 +86,14 @@ export default function AdminUsersPanel({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex items-center justify-between gap-5"
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 flex items-center justify-between gap-5"
           >
             <div className="flex items-center gap-4">
               <div
                 className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-base shadow-sm ${
                   admin.role === "SUPER_ADMIN"
-                    ? "bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600 border border-amber-200"
-                    : "bg-gradient-to-br from-cyan-100 to-cyan-50 text-cyan-600 border border-cyan-200"
+                    ? "bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-950 dark:to-amber-900 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800"
+                    : "bg-gradient-to-br from-cyan-100 to-cyan-50 dark:from-cyan-950 dark:to-cyan-900 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800"
                 }`}
               >
                 {admin.role === "SUPER_ADMIN" ? (
@@ -105,23 +105,23 @@ export default function AdminUsersPanel({
 
               <div>
                 <div className="flex items-center gap-2.5 mb-0.5">
-                  <h3 className="font-bold text-base text-slate-900">
+                  <h3 className="font-bold text-base text-slate-900 dark:text-white">
                     {admin.name || admin.email.split("@")[0]}
                   </h3>
                   <span
                     className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
                       admin.role === "SUPER_ADMIN"
-                        ? "bg-amber-50 text-amber-700 border-amber-200"
-                        : "bg-cyan-50 text-cyan-700 border-cyan-200"
+                        ? "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"
+                        : "bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800"
                     }`}
                   >
                     {admin.role === "SUPER_ADMIN" ? "Super Admin" : "Admin"}
                   </span>
                 </div>
-                <p className="text-sm text-slate-500 flex items-center gap-1">
+                <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
                   <Mail className="w-3.5 h-3.5" /> {admin.email}
                 </p>
-                <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 flex items-center gap-1">
                   <Calendar className="w-3 h-3" /> Granted by{" "}
                   {admin.grantedBy || "Console Root"}
                 </p>
@@ -131,7 +131,7 @@ export default function AdminUsersPanel({
             {admin.role !== "SUPER_ADMIN" && (
               <button
                 onClick={() => onRemoveAdmin(admin.id)}
-                className="p-3 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 border border-red-200 cursor-pointer transition-colors shrink-0"
+                className="p-3 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-950/70 text-red-500 hover:text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/60 cursor-pointer transition-colors shrink-0"
                 title="Revoke Admin Access"
               >
                 <Trash2 className="w-5 h-5" />
@@ -140,6 +140,7 @@ export default function AdminUsersPanel({
           </motion.div>
         ))}
       </div>
+
 
       {admins.length === 0 && (
         <div className="py-20 text-center bg-white rounded-2xl border border-slate-200/80 shadow-sm">

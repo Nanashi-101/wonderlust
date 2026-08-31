@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Navbar from "@/app/components/navbar";
 import Footer from "@/app/components/footer";
 import CreatePackageForm from "@/app/components/packageComponents/createPackageForm";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 
 export default async function CreatePackagePage({
   params,
@@ -15,6 +16,11 @@ export default async function CreatePackagePage({
   const authenticated = await isAuthenticated();
   if (!authenticated) {
     redirect(`/api/auth/login`);
+  }
+
+  const admin = await getCurrentAdmin();
+  if (!admin) {
+    redirect(`/${locale}`);
   }
 
   return (

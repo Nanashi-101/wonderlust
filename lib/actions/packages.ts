@@ -3,13 +3,18 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { packageInputSchema, type PackageInput } from "@/lib/package-utils";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 import type { PackageCategory } from "@prisma/client";
+
+const NOT_AUTHORIZED = "Not authorized. Admin access required.";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mutations / Server Actions
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function createPackageAction(input: PackageInput) {
+  if (!(await getCurrentAdmin())) return { success: false, error: NOT_AUTHORIZED };
+
   try {
     const validated = packageInputSchema.parse(input);
 
@@ -91,6 +96,8 @@ export async function getPackageBySlug(slug: string) {
 
 /** Update existing package by ID */
 export async function updatePackageAction(id: string, input: PackageInput) {
+  if (!(await getCurrentAdmin())) return { success: false, error: NOT_AUTHORIZED };
+
   try {
     const validated = packageInputSchema.parse(input);
 
@@ -127,6 +134,8 @@ export async function updatePackageAction(id: string, input: PackageInput) {
 
 /** Delete package by ID */
 export async function deletePackageAction(id: string) {
+  if (!(await getCurrentAdmin())) return { success: false, error: NOT_AUTHORIZED };
+
   try {
     await prisma.package.delete({
       where: { id },
