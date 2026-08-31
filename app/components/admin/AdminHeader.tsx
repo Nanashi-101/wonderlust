@@ -1,12 +1,14 @@
 import { Link } from "@/i18n/navigation";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { ExternalLink, Compass, LogOut, ChevronRight } from "lucide-react";
+import { ExternalLink, Compass, LogOut, ChevronRight, ShieldCheck } from "lucide-react";
 import Image from "next/image";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 
 export default async function AdminHeader() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
+  const admin = await getCurrentAdmin();
 
   return (
     <header className="bg-white/90 backdrop-blur-md border-b border-neutral-200 text-neutral-900 sticky top-0 z-50 shadow-xs">
@@ -64,18 +66,25 @@ export default async function AdminHeader() {
                 )}
               </div>
               <div className="hidden lg:block text-left">
+                {admin && (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 mb-0.5 rounded-md bg-amber-50 text-amber-600 text-[9px] font-bold uppercase tracking-wider border border-amber-200">
+                    <ShieldCheck className="w-2.5 h-2.5" />
+                    {admin.role === "SUPER_ADMIN" ? "Super Admin" : "Admin"}
+                  </span>
+                )}
                 <p className="text-xs font-semibold text-neutral-900 leading-tight">
                   {user.given_name} {user.family_name}
                 </p>
-                <p className="text-[10px] text-neutral-500">Creator Admin</p>
               </div>
 
               <LogoutLink
-                className="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition-colors ml-1"
+                postLogoutRedirectURL="/"
+                className="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition-colors ml-1 cursor-pointer"
                 title="Log Out"
               >
                 <LogOut className="w-4 h-4" />
               </LogoutLink>
+
             </div>
           )}
         </div>

@@ -160,8 +160,10 @@ model Inquiry {
   id          String        @id @default(cuid())
   name        String
   email       String
+  phone       String?
   message     String        @db.Text
   destination String?
+  reply       String?       @db.Text
   type        String        @default("TRIP_INQUIRY") // TRIP_INQUIRY, CUSTOM_ITINERARY, RESERVATION
   status      InquiryStatus @default(NEW)
   createdAt   DateTime      @default(now())
@@ -170,6 +172,7 @@ model Inquiry {
   @@index([status])
   @@index([createdAt])
 }
+
 
 model AdminUser {
   id        String    @id @default(cuid())

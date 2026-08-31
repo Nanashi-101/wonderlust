@@ -54,17 +54,17 @@ export default function CustomSelect({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-4 py-3 rounded-xl bg-white border transition-all text-left flex items-center justify-between text-sm cursor-pointer shadow-xs ${
+        className={`w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border transition-all text-left flex items-center justify-between text-sm cursor-pointer shadow-xs ${
           isOpen
-            ? "border-cyan-500 ring-4 ring-cyan-500/10 text-neutral-900"
-            : "border-neutral-300 hover:border-neutral-400 text-neutral-900"
+            ? "border-cyan-500 ring-4 ring-cyan-500/10 text-neutral-900 dark:text-white"
+            : "border-neutral-300 dark:border-slate-700 hover:border-neutral-400 dark:hover:border-slate-600 text-neutral-900 dark:text-white"
         }`}
       >
         <span className="flex items-center gap-2 truncate font-medium">
           {selectedOption?.icon}
           {selectedOption ? selectedOption.label : placeholder}
           {selectedOption?.badge && (
-            <span className="px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200 text-[10px] font-bold">
+            <span className="px-2 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800 text-[10px] font-bold">
               {selectedOption.badge}
             </span>
           )}
@@ -73,7 +73,7 @@ export default function CustomSelect({
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="text-neutral-400 shrink-0 ml-2"
+          className="text-neutral-400 dark:text-slate-500 shrink-0 ml-2"
         >
           <ChevronDown className="w-4 h-4" />
         </motion.div>
@@ -87,7 +87,7 @@ export default function CustomSelect({
             animate={{ opacity: 1, y: 4, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute z-50 left-0 right-0 bg-white/95 backdrop-blur-xl border border-neutral-200 rounded-2xl shadow-2xl p-1.5 overflow-hidden max-h-60 overflow-y-auto"
+            className="absolute z-50 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-neutral-200 dark:border-slate-800 rounded-2xl shadow-2xl p-1.5 overflow-hidden max-h-60 overflow-y-auto"
           >
             {options.map((option) => {
               const isSelected = option.value === value;
@@ -102,27 +102,28 @@ export default function CustomSelect({
                   }}
                   className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-between transition-colors cursor-pointer ${
                     isSelected
-                      ? "bg-cyan-50 text-cyan-900 font-semibold"
-                      : "text-neutral-700 hover:bg-neutral-100/80 hover:text-neutral-900"
+                      ? "bg-cyan-50 dark:bg-slate-800 text-cyan-900 dark:text-cyan-400 font-semibold"
+                      : "text-neutral-700 dark:text-slate-300 hover:bg-neutral-100/80 dark:hover:bg-slate-800 hover:text-neutral-900 dark:hover:text-white"
                   }`}
                 >
                   <span className="flex items-center gap-2 truncate">
                     {option.icon}
                     {option.label}
                     {option.badge && (
-                      <span className="px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-800 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 text-[10px] font-bold">
                         {option.badge}
                       </span>
                     )}
                   </span>
 
-                  {isSelected && <Check className="w-4 h-4 text-cyan-600 shrink-0 ml-2" />}
+                  {isSelected && <Check className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 ml-2" />}
                 </button>
               );
             })}
           </motion.div>
         )}
       </AnimatePresence>
+
     </div>
   );
 }

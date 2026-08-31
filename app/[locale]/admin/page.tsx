@@ -7,6 +7,7 @@ import {
   getInquiriesAction,
   getAdminUsersAction,
 } from "@/lib/actions/admin";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 
 export default async function AdminDashboardPage({
   params,
@@ -21,14 +22,22 @@ export default async function AdminDashboardPage({
     redirect(`/api/auth/login`);
   }
 
-  const user = await getUser();
+  // Any admin (standard or Super) can enter the panel; the Admin Team panel
+  // itself is further restricted to Super Admins inside AdminDashboardShell.
+  const admin = await getCurrentAdmin();
+  if (!admin) {
+    redirect(`/${locale}`);
+  }
 
-  // Fetch dashboard data
+  const isSuperAdmin = admin.role === "SUPER_ADMIN";
+  const kindeUser = await getUser();
+
+  // Fetch dashboard data — the admin directory is Super Admin-only, so skip it otherwise
   const [stats, packages, inquiries, admins] = await Promise.all([
     getAdminDashboardStats(),
     getPackages(),
     getInquiriesAction(),
-    getAdminUsersAction(),
+    isSuperAdmin ? getAdminUsersAction() : Promise.resolve([]),
   ]);
 
   return (
@@ -37,7 +46,7 @@ export default async function AdminDashboardPage({
       initialPackages={packages}
       initialInquiries={inquiries}
       initialAdmins={admins}
-      user={user ? { name: user.given_name || "Admin", email: user.email || "", picture: user.picture || null } : null}
+      user={{ name: admin.name || kindeUser?.given_name || "Admin", email: admin.email, picture: kindeUser?.picture || null, role: admin.role }}
     />
   );
 }

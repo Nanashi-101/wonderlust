@@ -1,3 +1,5 @@
+import { Link } from "@/i18n/navigation";
+
 export default function AdminFooter() {
   return (
     <footer className="bg-cyan-500 text-white py-8 text-xs">
@@ -12,15 +14,15 @@ export default function AdminFooter() {
         </div>
 
         <div className="flex items-center gap-6 text-white">
-          <a href="/en" className="hover:text-cyan-600 transition-colors">
+          <Link href="/" className="hover:text-cyan-600 transition-colors">
             Main Site
-          </a>
-          <a href="/en/packages" className="hover:text-cyan-600 transition-colors">
+          </Link>
+          <Link href="/packages" className="hover:text-cyan-600 transition-colors">
             Tour Catalog
-          </a>
-          <a href="/en/bookings" className="hover:text-cyan-600 transition-colors">
+          </Link>
+          <Link href="/bookings" className="hover:text-cyan-600 transition-colors">
             Bookings
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

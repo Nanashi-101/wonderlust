@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { uploadToR2 } from "@/lib/r2";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 
 export async function POST(req: Request) {
   try {
-    // Authenticate user
-    const { isAuthenticated } = getKindeServerSession();
-    const authenticated = await isAuthenticated();
+    // Only admins may upload package/destination imagery
+    const admin = await getCurrentAdmin();
 
-    if (!authenticated) {
+    if (!admin) {
       return NextResponse.json(
-        { error: "Unauthorized. Please log in to upload files." },
+        { error: "Unauthorized. Admin access required to upload files." },
         { status: 401 }
       );
     }

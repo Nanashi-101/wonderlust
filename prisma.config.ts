@@ -9,6 +9,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DIRECT_URL"],
+    url: process.env["DIRECT_URL"] ?? (() => {
+      throw new Error("DIRECT_URL environment variable is not set");
+    })(),
   },
 });
