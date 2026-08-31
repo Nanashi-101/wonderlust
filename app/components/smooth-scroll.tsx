@@ -6,10 +6,13 @@ import Lenis from "@studio-freight/lenis";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 
+// Register plugin once at the top level
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export default function SmoothScroll() {
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => 1 - Math.pow(1 - t, 3),
@@ -23,25 +26,30 @@ export default function SmoothScroll() {
       requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    const rafId = requestAnimationFrame(raf);
 
-    lenis.on("scroll", ScrollTrigger.update);
+    lenis.on("scroll", () => {
+      ScrollTrigger.update();
+    });
 
-    ScrollTrigger.scrollerProxy(document.body, {
-      scrollTop(value) {
-        if (typeof value === "number") {
-          lenis.scrollTo(value);
-        }
-        return window.scrollY;
-      },
-      getBoundingClientRect() {
-        return {
-          top: 0,
-          left: 0,
-          width: window.innerWidth,
-          height: window.innerHeight,
-        };
-      },
+    // Use a context for better scope management
+    const ctx = gsap.context(() => {
+      ScrollTrigger.scrollerProxy(document.body, {
+        scrollTop(value) {
+          if (typeof value === "number") {
+            lenis.scrollTo(value);
+          }
+          return window.scrollY;
+        },
+        getBoundingClientRect() {
+          return {
+            top: 0,
+            left: 0,
+            width: window.innerWidth,
+            height: window.innerHeight,
+          };
+        },
+      });
     });
 
     ScrollTrigger.refresh();
@@ -86,10 +94,12 @@ export default function SmoothScroll() {
 
     return () => {
       document.removeEventListener("click", handleClick);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
-      ScrollTrigger.killAll();
+      ctx.revert(); // Revert only the context for this component
     };
   }, []);
 
   return null;
 }
+

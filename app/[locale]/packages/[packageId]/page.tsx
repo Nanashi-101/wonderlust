@@ -1,31 +1,39 @@
-import { packages } from "@/app/lib/utils";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 import Navbar from "@/app/components/navbar";
 import Footer from "@/app/components/footer";
 import { CalendarDays, MapPin, SignalHigh, Banknote, CheckCircle2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MobileBookingBar from "@/app/components/packageComponents/MobileBookingBar";
+import { getPackageBySlug } from "@/lib/actions/packages";
+import { localisePackage } from "@/lib/package-utils";
 
-export default async function PackageDetails({ params }: { params: Promise<{ packageId: string }> }) {
+export default async function PackageDetails({
+  params,
+}: {
+  params: Promise<{ packageId: string }>;
+}) {
   const { packageId } = await params;
-  const pkg = packages.find((p) => p.id === packageId);
 
-  if (!pkg) notFound();
+  const [raw, locale] = await Promise.all([
+    getPackageBySlug(packageId),
+    getLocale(),
+  ]);
 
-  const t_data = await getTranslations("PackagesData");
-  const t_ui = await getTranslations("PackageGrid");
+  if (!raw) notFound();
+
+  const pkg = localisePackage(raw, locale);
 
   return (
     <div className="min-h-screen bg-neutral-50 flex flex-col">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="relative h-[70vh] w-full overflow-hidden">
         <Image
-          src={pkg.image}
-          alt={t_data(`${pkg.tKey}.title`)}
+          src={pkg.imagePath}
+          alt={pkg.title}
           fill
           priority
           className="object-cover"
@@ -34,21 +42,23 @@ export default async function PackageDetails({ params }: { params: Promise<{ pac
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="container mx-auto px-6 text-center text-white">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-              {t_data(`${pkg.tKey}.title`)}
+              {pkg.title}
             </h1>
             <div className="flex flex-wrap items-center justify-center gap-6 text-lg opacity-90 font-medium">
               <span className="flex items-center gap-2">
                 <CalendarDays className="w-5 h-5 text-cyan-400" />
-                {t_data(`${pkg.tKey}.duration`)}
+                {pkg.durationDisplay}
               </span>
               <span className="flex items-center gap-2">
                 <SignalHigh className="w-5 h-5 text-cyan-400" />
-                {t_data(`${pkg.tKey}.difficulty`)}
+                {pkg.difficulty}
               </span>
-              <span className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-cyan-400" />
-                {pkg.altitude}
-              </span>
+              {pkg.altitudeDisplay && (
+                <span className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-cyan-400" />
+                  {pkg.altitudeDisplay}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -57,22 +67,32 @@ export default async function PackageDetails({ params }: { params: Promise<{ pac
       {/* Main Content */}
       <section className="container mx-auto px-6 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-          {/* Left Column: Description and Highlights */}
+          {/* Left Column */}
           <div className="lg:col-span-2 space-y-12">
             <div>
-              <h2 className="text-3xl font-bold mb-6 text-neutral-900">About this Expedition</h2>
+              <h2 className="text-3xl font-bold mb-6 text-neutral-900">
+                About this Expedition
+              </h2>
               <p className="text-lg text-neutral-600 leading-relaxed">
-                {t_data(`${pkg.tKey}.description`)}
+                {pkg.description}
               </p>
             </div>
 
             <div>
-              <h2 className="text-3xl font-bold mb-8 text-neutral-900">Expedition Highlights</h2>
+              <h2 className="text-3xl font-bold mb-8 text-neutral-900">
+                Expedition Highlights
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pkg.highlights.map((highlight, index) => (
-                  <div key={index} className="flex items-start gap-3 p-4 bg-white rounded-2xl shadow-sm border border-neutral-100">
+                {pkg.highlights?.map((highlight: string, index: number) => (
+                  <div
+
+                    key={index}
+                    className="flex items-start gap-3 p-4 bg-white rounded-2xl shadow-sm border border-neutral-100"
+                  >
                     <CheckCircle2 className="w-6 h-6 text-cyan-500 mt-0.5" />
-                    <span className="text-neutral-700 font-medium">{highlight}</span>
+                    <span className="text-neutral-700 font-medium">
+                      {highlight}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -84,8 +104,12 @@ export default async function PackageDetails({ params }: { params: Promise<{ pac
             <div className="sticky top-32 bg-white rounded-3xl p-8 shadow-xl border border-neutral-100">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <p className="text-sm text-neutral-500 uppercase tracking-wider font-semibold">Total Price</p>
-                  <p className="text-3xl font-bold text-cyan-600">{t_data(`${pkg.tKey}.price`)}</p>
+                  <p className="text-sm text-neutral-500 uppercase tracking-wider font-semibold">
+                    Total Price
+                  </p>
+                  <p className="text-3xl font-bold text-cyan-600">
+                    {pkg.priceDisplay}
+                  </p>
                 </div>
                 <div className="p-3 bg-cyan-50 rounded-2xl">
                   <Banknote className="w-8 h-8 text-cyan-600" />
@@ -95,7 +119,7 @@ export default async function PackageDetails({ params }: { params: Promise<{ pac
               <div className="space-y-4 mb-8">
                 <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                   <span className="text-neutral-500">Duration</span>
-                  <span className="font-semibold">{t_data(`${pkg.tKey}.duration`)}</span>
+                  <span className="font-semibold">{pkg.durationDisplay}</span>
                 </div>
                 <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                   <span className="text-neutral-500">Group Size</span>
@@ -122,9 +146,9 @@ export default async function PackageDetails({ params }: { params: Promise<{ pac
 
       <Footer />
 
-      <MobileBookingBar 
-        price={t_data(`${pkg.tKey}.price`)} 
-        duration={t_data(`${pkg.tKey}.duration`)} 
+      <MobileBookingBar
+        price={pkg.priceDisplay}
+        duration={pkg.durationDisplay}
       />
     </div>
   );

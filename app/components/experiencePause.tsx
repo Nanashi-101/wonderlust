@@ -14,8 +14,6 @@ export default function ExperiencePause() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
     const ctx = gsap.context(() => {
       gsap.from(".pause-inner", {
         opacity: 0,
