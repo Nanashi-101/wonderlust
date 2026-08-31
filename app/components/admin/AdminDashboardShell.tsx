@@ -30,8 +30,8 @@ import AdminUsersPanel from "./AdminUsersPanel";
 import CreatorStudioWizard from "./CreatorStudioWizard";
 import AdminSearchModal from "./AdminSearchModal";
 import AdminNotifications from "./AdminNotifications";
-import AdminThemeToggle from "./AdminThemeToggle";
 import {
+
   deletePackageAction,
   updatePackageAction,
   createPackageAction,
@@ -448,12 +448,10 @@ export default function AdminDashboardShell({
                 inquiries={inquiries}
                 onNavigateToEnquiries={() => setActiveTab("enquiries")}
               />
-
-              {/* Theme Toggle (Replaced Settings) */}
-              <AdminThemeToggle />
             </div>
           </div>
         </header>
+
 
         {/* Content Area */}
         <main className="flex-1 p-6 lg:p-10">
