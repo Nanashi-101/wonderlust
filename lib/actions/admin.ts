@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { getCurrentAdmin, requireSuperAdmin } from "@/lib/auth/admin";
+import { after } from "next/server";
+import { sendAdminInviteEmail, sendAdminReplyEmail } from "@/lib/email/admin";
 import type { InquiryStatus, AdminRole } from "@prisma/client";
 
 const NOT_AUTHORIZED = "Not authorized. Admin access required.";
@@ -143,7 +145,8 @@ export async function updateInquiryStatusAction(id: string, status: InquiryStatu
 export async function replyToInquiryAction(
   id: string,
   reply: string,
-  status: InquiryStatus = "IN_PROGRESS"
+  status: InquiryStatus = "IN_PROGRESS",
+  options?: { subject?: string; sendEmail?: boolean }
 ) {
   if (!(await getCurrentAdmin())) return { success: false, error: NOT_AUTHORIZED };
 
@@ -162,6 +165,26 @@ export async function replyToInquiryAction(
     } catch {
       // Ignore
     }
+
+    // Email the customer unless the Email Studio's toggle was switched off.
+    // Scheduled with after() and guarded: the reply is already saved, so a
+    // mail failure must not report the save itself as failed.
+    if (options?.sendEmail !== false) {
+      try {
+        after(async () => {
+          await sendAdminReplyEmail({
+            to: updated.email,
+            name: updated.name,
+            reply: reply.trim(),
+            destination: updated.destination,
+            subject: options?.subject,
+          });
+        });
+      } catch (error) {
+        console.error("[email] could not schedule reply email:", error);
+      }
+    }
+
     return { success: true, inquiry: parseInquiryRecord(updated) };
   } catch (error: any) {
     console.error("Failed to reply to inquiry:", error);
@@ -218,6 +241,22 @@ export async function grantAdminRoleAction(email: string, role: AdminRole = "ADM
     });
 
     revalidatePath("/[locale]/admin", "page");
+
+    // Tell the new admin they have access. Fires on re-grants too, which
+    // doubles as a role-change notice.
+    try {
+      after(async () => {
+        await sendAdminInviteEmail({
+          to: created.email,
+          role: created.role,
+          name: created.name,
+          grantedBy: created.grantedBy,
+        });
+      });
+    } catch (error) {
+      console.error("[email] could not schedule admin invite email:", error);
+    }
+
     return { success: true, admin: created };
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to grant admin privileges." };
