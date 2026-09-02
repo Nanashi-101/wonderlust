@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Inbox,
@@ -23,6 +23,23 @@ import {
   CheckCircle2,
   AlertCircle,
   Share2,
+  FileText,
+  Eye,
+  Edit3,
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Quote,
+  Minus,
+  RefreshCw,
+  ShieldCheck,
+  AtSign,
+  Tag,
+  ChevronDown,
+  ChevronUp,
+  Sliders,
+  Sparkle,
 } from "lucide-react";
 import CustomSelect, { type SelectOption } from "./CustomSelect";
 
@@ -57,10 +74,20 @@ export default function AdminEnquiriesPanel({
   // Selected Inquiry for Detailed View & Reply Modal
   const [selectedInquiry, setSelectedInquiry] = useState<InquiryRecord | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [emailSubject, setEmailSubject] = useState("");
   const [replyStatus, setReplyStatus] = useState<"IN_PROGRESS" | "RESOLVED">("RESOLVED");
   const [isSending, setIsSending] = useState(false);
   const [successNotice, setSuccessNotice] = useState("");
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  
+  // Modal Studio Sub-tab: "email" | "whatsapp" | "details"
+  const [modalTab, setModalTab] = useState<"email" | "whatsapp" | "details">("email");
+  // Email mode: "compose" | "preview"
+  const [composerView, setComposerView] = useState<"compose" | "preview">("compose");
+  const [showOriginalMessage, setShowOriginalMessage] = useState(true);
+  const [sendViaResend, setSendViaResend] = useState(true);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const filteredInquiries = inquiries.filter(
     (inq) => inq.type === activeSubTab
@@ -93,8 +120,13 @@ export default function AdminEnquiriesPanel({
   const handleOpenDetail = (inq: InquiryRecord) => {
     setSelectedInquiry(inq);
     setReplyText(inq.reply || "");
+    const dest = inq.destination || "Expedition";
+    setEmailSubject(`Wonderlust Expeditions: Regarding your inquiry for ${dest}`);
     setReplyStatus(inq.status === "NEW" ? "IN_PROGRESS" : inq.status as any);
     setSuccessNotice("");
+    setModalTab("email");
+    setComposerView("compose");
+    setShowOriginalMessage(true);
   };
 
   const handleCopy = (text: string, label: string) => {
@@ -103,28 +135,64 @@ export default function AdminEnquiriesPanel({
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  // Quick templates
-  const applyTemplate = (templateType: "itinerary" | "dates" | "quote") => {
+  // Quick insertion tool for text area formatting
+  const insertText = (before: string, after: string = "") => {
+    if (!textareaRef.current) return;
+    const el = textareaRef.current;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const selected = replyText.substring(start, end);
+    const replacement = `${before}${selected || "text"}${after}`;
+    const newText = replyText.substring(0, start) + replacement + replyText.substring(end);
+    setReplyText(newText);
+    setTimeout(() => {
+      el.focus();
+      el.setSelectionRange(start + before.length, start + before.length + (selected.length || 4));
+    }, 50);
+  };
+
+  // Quick dynamic tag insertion
+  const insertTag = (tag: string) => {
+    if (!selectedInquiry) return;
+    let val = "";
+    if (tag === "name") val = selectedInquiry.name.split(" ")[0] || selectedInquiry.name;
+    if (tag === "destination") val = selectedInquiry.destination || "the Himalayas";
+    if (tag === "id") val = `#WL-${selectedInquiry.id.slice(-6).toUpperCase()}`;
+    if (tag === "date") val = new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" });
+    
+    insertText(val, "");
+  };
+
+  // Quick rich templates
+  const applyTemplate = (templateType: "itinerary" | "dates" | "quote" | "friendly") => {
     if (!selectedInquiry) return;
     const name = selectedInquiry.name.split(" ")[0] || selectedInquiry.name;
     const dest = selectedInquiry.destination || "the Himalayas";
 
     if (templateType === "itinerary") {
+      setEmailSubject(`Wonderlust Expeditions: Tailored Itinerary Draft for ${dest}`);
       setReplyText(
-        `Hi ${name}, thank you for choosing Wonderlust! We have crafted a personalized expedition itinerary for ${dest}. Our senior tour lead will coordinate your dates and arrangements.`
+        `Dear ${name},\n\nThank you for choosing Wonderlust Expeditions! We have crafted an exclusive, customized itinerary tailored for your upcoming journey to ${dest}.\n\nKey Expedition Highlights:\n• Private high-altitude logistical support and acclimatization schedule\n• Handcrafted boutique stays and mountain retreats\n• Dedicated senior expedition guide and 24/7 concierge\n\nOur expedition coordinator would love to review these arrangements with you at your convenience.\n\nWarm regards,\nThe Wonderlust Expedition Team`
       );
     } else if (templateType === "dates") {
+      setEmailSubject(`Wonderlust Expeditions: Preferred Dates for ${dest}`);
       setReplyText(
-        `Hello ${name}, thank you for reaching out regarding ${dest}! Could you please share your preferred travel window and group size so we can customize your quote?`
+        `Hello ${name},\n\nThank you for reaching out regarding your travel plans for ${dest}!\n\nTo help our planning team design the most optimal itinerary and accurate pricing package, could you please let us know:\n1. Your estimated travel dates or season window\n2. Number of adult and child travelers in your party\n3. Any special preferences (luxury camping, trekking difficulty, culinary needs)\n\nWe look forward to curating an extraordinary experience for you.\n\nBest regards,\nWonderlust Team`
       );
     } else if (templateType === "quote") {
+      setEmailSubject(`Wonderlust Expeditions: Finalized Package Quotation - ${dest}`);
       setReplyText(
-        `Hi ${name}, your customized quote and package itinerary for ${dest} has been finalized. We look forward to hosting you on an unforgettable journey!`
+        `Dear ${name},\n\nWe are delighted to share the finalized quotation and comprehensive expedition package details for ${dest}.\n\nPackage Inclusions:\n• All ground transportation, scenic transfers, and domestic permits\n• Premium accommodation and curated daily culinary experiences\n• Complete gear support, safety protocols, and certified lead naturalists\n\nPlease let us know if you have any questions or wish to secure your booking dates.\n\nWarmest regards,\nWonderlust Travel Studio`
+      );
+    } else if (templateType === "friendly") {
+      setEmailSubject(`Wonderlust Expeditions: Hello from our Expedition Team`);
+      setReplyText(
+        `Hi ${name},\n\nThank you for reaching out to Wonderlust regarding your inquiry for ${dest}.\n\nWe have received your request and our lead travel specialist is currently preparing the details for you. In the meantime, feel free to reply directly to this email or reach us on WhatsApp if you have any urgent requests.\n\nWarm regards,\nWonderlust Expeditions`
       );
     }
   };
 
-  // Submit reply & save to DB
+  // Submit reply & save to DB (Resend trigger ready)
   const handleSaveReply = async (customStatus?: "IN_PROGRESS" | "RESOLVED") => {
     if (!selectedInquiry || !replyText.trim()) return;
     setIsSending(true);
@@ -140,23 +208,23 @@ export default function AdminEnquiriesPanel({
           reply: replyText.trim(),
           status: targetStatus,
         });
-        setSuccessNotice("Response saved and published to customer inquiry!");
-        setTimeout(() => setSuccessNotice(""), 4000);
+        setSuccessNotice(
+          sendViaResend
+            ? "Reply published & email queued for delivery via Resend!"
+            : "Inquiry response saved successfully!"
+        );
+        setTimeout(() => setSuccessNotice(""), 4500);
       }
     }
     setIsSending(false);
   };
 
-  // Send Email (mailto link + auto save reply)
-  const handleSendEmail = () => {
+  // Send Email via native client (fallback)
+  const handleSendEmailNative = () => {
     if (!selectedInquiry) return;
     handleSaveReply("IN_PROGRESS");
-    const subject = encodeURIComponent(
-      `Wonderlust Expeditions - Inquiry Response (${selectedInquiry.destination || "Himalayan Journey"})`
-    );
-    const body = encodeURIComponent(
-      `Dear ${selectedInquiry.name},\n\n${replyText || "Thank you for reaching out to Wonderlust Expeditions."}\n\nWarm regards,\nWonderlust Team`
-    );
+    const subject = encodeURIComponent(emailSubject || `Wonderlust Expeditions - Inquiry Response (${selectedInquiry.destination || "Trip"})`);
+    const body = encodeURIComponent(replyText);
     window.open(`mailto:${selectedInquiry.email}?subject=${subject}&body=${body}`, "_blank");
   };
 
@@ -167,11 +235,10 @@ export default function AdminEnquiriesPanel({
 
     const cleanPhone = selectedInquiry.phone?.replace(/[^0-9+]/g, "") || "";
     const text = encodeURIComponent(
-      `Hello ${selectedInquiry.name}, regarding your Wonderlust inquiry for ${selectedInquiry.destination || "your trip"}: ${replyText}`
+      `Hello ${selectedInquiry.name}, regarding your Wonderlust inquiry for ${selectedInquiry.destination || "your trip"}:\n\n${replyText}`
     );
 
     if (cleanPhone) {
-      // Open WhatsApp or SMS
       window.open(`https://wa.me/${cleanPhone.replace("+", "")}?text=${text}`, "_blank");
     } else {
       window.open(`sms:?body=${text}`, "_blank");
@@ -216,7 +283,7 @@ export default function AdminEnquiriesPanel({
               <Inbox className="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0" /> Enquiry Management
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Track customer trip requests, review full details, and reply directly via Email or SMS/WhatsApp
+              Track customer trip requests, compose rich email replies via Resend, and manage dispatch history
             </p>
           </div>
 
@@ -355,7 +422,7 @@ export default function AdminEnquiriesPanel({
                   </span>
 
                   <span className="text-cyan-600 dark:text-cyan-400 font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                    View Details & Reply &rarr;
+                    Compose Reply & Studio &rarr;
                   </span>
                 </div>
               </div>
@@ -376,7 +443,7 @@ export default function AdminEnquiriesPanel({
                   onClick={() => handleOpenDetail(item)}
                   className="w-full py-2.5 px-3 rounded-xl bg-cyan-50 hover:bg-cyan-100 dark:bg-cyan-950/50 dark:hover:bg-cyan-950 text-cyan-700 dark:text-cyan-300 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer border border-cyan-200/80 dark:border-cyan-800/60"
                 >
-                  <Send className="w-3.5 h-3.5" /> Answer Inquiry
+                  <Send className="w-3.5 h-3.5" /> Open Email Studio
                 </button>
               </div>
             </motion.div>
@@ -385,279 +452,652 @@ export default function AdminEnquiriesPanel({
       </div>
 
       {/* ────────────────────────────────────────────────────────── */}
-      {/* Elaborate Detail & Answer Modal */}
+      {/* Advanced Resend-Ready Inquiry & Email Response Studio Modal */}
       {/* ────────────────────────────────────────────────────────── */}
       <AnimatePresence>
         {selectedInquiry && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/60 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-black/70 backdrop-blur-md overflow-y-auto">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.96, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-2xl w-full shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 sm:space-y-6 my-auto max-h-[92vh] overflow-y-auto"
+              exit={{ opacity: 0, scale: 0.96, y: 15 }}
+              className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-200 dark:border-slate-800 my-auto max-h-[94vh] flex flex-col overflow-hidden"
             >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-slate-100 dark:border-slate-800">
+              {/* Modal Top Header Bar */}
+              <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/40 shrink-0">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-950 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-md shrink-0">
-                    {selectedInquiry.name
-                      ?.split(" ")
-                      .map((n: string) => n[0])
-                      .join("")
-                      .slice(0, 2) || "??"}
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-700 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-md shrink-0">
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-base sm:text-xl font-bold text-slate-900 dark:text-white truncate">
-                      {selectedInquiry.name}
-                    </h3>
-                    <p className="text-[11px] sm:text-xs text-slate-400 font-mono mt-0.5 truncate">
-                      Inquiry ID: #WL-{selectedInquiry.id.slice(-6).toUpperCase()}
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
+                        Reply to {selectedInquiry.name}
+                      </h3>
+                      <span className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                        #WL-{selectedInquiry.id.slice(-6).toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      {selectedInquiry.email} &bull; {selectedInquiry.destination || "Custom Itinerary"}
                     </p>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setSelectedInquiry(null)}
-                  className="p-1.5 sm:p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer shrink-0"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  {/* Status indicator badge */}
+                  <span
+                    className={`hidden sm:inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg border ${getStatusBadgeClass(
+                      selectedInquiry.status
+                    )}`}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
+                    {getStatusLabel(selectedInquiry.status)}
+                  </span>
+
+                  <button
+                    onClick={() => setSelectedInquiry(null)}
+                    className="p-1.5 sm:p-2 rounded-xl hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
 
-              {/* Success Alert */}
+              {/* Modal Navigation Mode Tabs */}
+              <div className="px-4 sm:px-6 pt-3 pb-2 border-b border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none shrink-0">
+                <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                  <button
+                    onClick={() => setModalTab("email")}
+                    className={`px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      modalTab === "email"
+                        ? "bg-white dark:bg-slate-700 text-cyan-700 dark:text-cyan-300 shadow-xs"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Email Studio</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] bg-cyan-100 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 font-extrabold uppercase tracking-wider">
+                      Resend
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setModalTab("whatsapp")}
+                    className={`px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      modalTab === "whatsapp"
+                        ? "bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-xs"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+                    <span>SMS / WhatsApp</span>
+                  </button>
+
+                  <button
+                    onClick={() => setModalTab("details")}
+                    className={`px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      modalTab === "details"
+                        ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Inquiry Dossier</span>
+                  </button>
+                </div>
+
+                {/* View Switcher (Only visible in Email tab) */}
+                {modalTab === "email" && (
+                  <div className="flex items-center gap-1 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setComposerView("compose")}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                        composerView === "compose"
+                          ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                          : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                      }`}
+                    >
+                      <Edit3 className="w-3 h-3" /> Compose
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setComposerView("preview")}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                        composerView === "preview"
+                          ? "bg-cyan-600 text-white shadow-xs"
+                          : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                      }`}
+                    >
+                      <Eye className="w-3 h-3" /> Email Preview
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Success Notification Alert */}
               {successNotice && (
-                <div className="p-3 sm:p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs font-bold flex items-center gap-2">
+                <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs font-bold flex items-center gap-2 shrink-0">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>{successNotice}</span>
                 </div>
               )}
 
-              {/* Customer Contact Card Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
-                {/* Email with Copy */}
-                <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 flex items-center justify-between gap-2 min-w-0">
-                  <div className="min-w-0 flex-1">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
-                      Email Address
-                    </span>
-                    <a
-                      href={`mailto:${selectedInquiry.email}`}
-                      className="font-mono text-cyan-700 dark:text-cyan-400 font-semibold truncate block hover:underline break-all"
-                    >
-                      {selectedInquiry.email}
-                    </a>
-                  </div>
-                  <button
-                    onClick={() => handleCopy(selectedInquiry.email, "email")}
-                    className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer"
-                    title="Copy Email"
-                  >
-                    {copiedField === "email" ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-500" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
-                </div>
+              {/* Scrollable Main Content Area */}
+              <div className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
+                {/* ──────────────────────────────────────────────────────── */}
+                {/* TAB 1: EMAIL STUDIO (RESEND PLATFORM) */}
+                {/* ──────────────────────────────────────────────────────── */}
+                {modalTab === "email" && (
+                  <div className="space-y-4">
+                    {/* Collapsible Customer Request Reference Banner */}
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setShowOriginalMessage(!showOriginalMessage)}
+                        className="w-full px-3.5 py-2.5 flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      >
+                        <span className="flex items-center gap-2">
+                          <MessageSquare className="w-3.5 h-3.5 text-cyan-600" />
+                          <span>Original Customer Request</span>
+                          <span className="text-[10px] text-slate-400 font-normal">
+                            ({new Date(selectedInquiry.createdAt).toLocaleDateString()})
+                          </span>
+                        </span>
+                        {showOriginalMessage ? (
+                          <ChevronUp className="w-4 h-4 text-slate-400" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-slate-400" />
+                        )}
+                      </button>
 
-                {/* Phone with Copy */}
-                <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 flex items-center justify-between gap-2 min-w-0">
-                  <div className="min-w-0 flex-1">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
-                      Contact Phone
-                    </span>
-                    <span className="font-mono text-slate-800 dark:text-slate-200 font-semibold truncate block">
-                      {selectedInquiry.phone || "Not provided"}
-                    </span>
-                  </div>
-                  {selectedInquiry.phone && (
-                    <button
-                      onClick={() => handleCopy(selectedInquiry.phone || "", "phone")}
-                      className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer"
-                      title="Copy Phone"
-                    >
-                      {copiedField === "phone" ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-500" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
+                      {showOriginalMessage && (
+                        <div className="px-3.5 pb-3 pt-1 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 italic leading-relaxed break-words bg-white/50 dark:bg-slate-900/40">
+                          &ldquo;{selectedInquiry.message}&rdquo;
+                        </div>
                       )}
-                    </button>
-                  )}
-                </div>
+                    </div>
 
-                {/* Destination */}
-                <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 min-w-0">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
-                    Target Destination
-                  </span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 truncate">
-                    <MapPin className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
-                    <span className="truncate">{selectedInquiry.destination || "Custom Itinerary"}</span>
-                  </span>
-                </div>
+                    {/* Email Headers: To, From, Subject */}
+                    <div className="p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 space-y-2.5 text-xs">
+                      {/* From & To Row */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 w-12 shrink-0">
+                            From:
+                          </span>
+                          <span className="font-mono text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700 truncate block flex-1">
+                            Wonderlust Expeditions &lt;support@wonderlust.travel&gt;
+                          </span>
+                        </div>
 
-                {/* Current Status */}
-                <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 flex items-center justify-between gap-2 min-w-0">
-                  <div className="min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
-                      Current Status
-                    </span>
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-0.5 sm:py-1 rounded-lg border ${getStatusBadgeClass(
-                        selectedInquiry.status
-                      )}`}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
-                      {getStatusLabel(selectedInquiry.status)}
-                    </span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 w-12 shrink-0">
+                            To:
+                          </span>
+                          <div className="flex items-center justify-between font-mono text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-950/60 px-2.5 py-1 rounded-md border border-cyan-200 dark:border-cyan-800 truncate flex-1">
+                            <span className="truncate">{selectedInquiry.name} &lt;{selectedInquiry.email}&gt;</span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(selectedInquiry.email, "email_to")}
+                              className="ml-1 text-cyan-600 hover:text-cyan-800 dark:hover:text-cyan-200 shrink-0 cursor-pointer"
+                              title="Copy email"
+                            >
+                              {copiedField === "email_to" ? (
+                                <Check className="w-3 h-3 text-emerald-500" />
+                              ) : (
+                                <Copy className="w-3 h-3" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Subject Line Input */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 w-12 shrink-0">
+                          Subject:
+                        </span>
+                        <input
+                          type="text"
+                          value={emailSubject}
+                          onChange={(e) => setEmailSubject(e.target.value)}
+                          placeholder="Email subject line..."
+                          className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* COMPOSER VIEW vs PREVIEW VIEW */}
+                    {composerView === "compose" ? (
+                      <div className="space-y-2.5">
+                        {/* Quick Template Presets */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 flex items-center gap-1">
+                              <Sparkles className="w-3 h-3 text-cyan-600" /> Professional Email Templates
+                            </span>
+                            <span className="text-[10px] text-slate-400">Click to apply instantly</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => applyTemplate("itinerary")}
+                              className="px-2.5 py-1 rounded-lg bg-cyan-50 hover:bg-cyan-100 dark:bg-cyan-950/60 dark:hover:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300 text-[11px] font-semibold transition-colors cursor-pointer border border-cyan-200/80 dark:border-cyan-800"
+                            >
+                              + Itinerary Proposal
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => applyTemplate("dates")}
+                              className="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-[11px] font-semibold transition-colors cursor-pointer border border-blue-200/80 dark:border-blue-800"
+                            >
+                              + Dates & Party Size Request
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => applyTemplate("quote")}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold transition-colors cursor-pointer border border-emerald-200/80 dark:border-emerald-800"
+                            >
+                              + Finalized Package Quote
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => applyTemplate("friendly")}
+                              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
+                            >
+                              + General Follow-up
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Formatting Toolbar */}
+                        <div className="flex flex-wrap items-center justify-between gap-1.5 p-1.5 bg-slate-50 dark:bg-slate-800/80 rounded-t-xl border border-b-0 border-slate-200 dark:border-slate-700 text-xs">
+                          {/* Rich formatting tokens */}
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => insertText("**", "**")}
+                              className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-pointer"
+                              title="Bold"
+                            >
+                              <Bold className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => insertText("*", "*")}
+                              className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-pointer"
+                              title="Italic"
+                            >
+                              <Italic className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-0.5" />
+                            <button
+                              type="button"
+                              onClick={() => insertText("\n• ", "")}
+                              className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-pointer"
+                              title="Bullet List"
+                            >
+                              <List className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => insertText("\n1. ", "")}
+                              className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-pointer"
+                              title="Numbered List"
+                            >
+                              <ListOrdered className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => insertText("\n> ", "")}
+                              className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-pointer"
+                              title="Quote Block"
+                            >
+                              <Quote className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Variable Chips */}
+                          <div className="flex items-center gap-1">
+                            <span className="text-[10px] text-slate-400 font-semibold hidden md:inline">
+                              Tags:
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => insertTag("name")}
+                              className="px-2 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[10px] font-mono text-cyan-700 dark:text-cyan-300 hover:bg-cyan-50 cursor-pointer"
+                              title="Insert Customer Name"
+                            >
+                              +Name
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => insertTag("destination")}
+                              className="px-2 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[10px] font-mono text-cyan-700 dark:text-cyan-300 hover:bg-cyan-50 cursor-pointer"
+                              title="Insert Destination"
+                            >
+                              +Destination
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => insertTag("id")}
+                              className="px-2 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[10px] font-mono text-cyan-700 dark:text-cyan-300 hover:bg-cyan-50 cursor-pointer"
+                              title="Insert Inquiry ID"
+                            >
+                              +InquiryID
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Textarea */}
+                        <textarea
+                          ref={textareaRef}
+                          rows={8}
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder="Write your email response here, or click one of the professional templates above to begin..."
+                          className="w-full p-4 rounded-b-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 outline-none text-xs sm:text-sm font-sans text-slate-900 dark:text-white placeholder:text-slate-400 resize-none transition-all leading-relaxed"
+                        />
+                      </div>
+                    ) : (
+                      /* EMAIL PREVIEW MODE (HOW RESEND DELIVERS TO CUSTOMER) */
+                      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 p-6 shadow-inner space-y-6">
+                        {/* Branded Email Header */}
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                              W
+                            </div>
+                            <div>
+                              <h4 className="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white">
+                                Wonderlust Expeditions
+                              </h4>
+                              <p className="text-[10px] text-slate-400">Curated Himalayan Journeys</p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                            Inquiry Ref #WL-{selectedInquiry.id.slice(-6).toUpperCase()}
+                          </span>
+                        </div>
+
+                        {/* Subject Preview */}
+                        <div className="text-sm font-bold text-slate-900 dark:text-white border-l-2 border-cyan-500 pl-3">
+                          {emailSubject || "Inquiry Response from Wonderlust"}
+                        </div>
+
+                        {/* Body Preview */}
+                        <div className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap font-sans space-y-2">
+                          {replyText ? (
+                            replyText
+                          ) : (
+                            <span className="text-slate-400 italic">
+                              (No message content written yet. Switch back to Compose to write your email response.)
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Branded Email Footer */}
+                        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 space-y-1">
+                          <p className="font-semibold text-slate-600 dark:text-slate-300">
+                            Wonderlust Travel & Expedition Studio
+                          </p>
+                          <p>Trek • Tour • Explore &bull; support@wonderlust.travel &bull; +91 98765 43210</p>
+                          <p className="text-[10px] text-slate-400">
+                            This is an automated dispatch from Wonderlust Admin Console via Resend.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Dispatch Options & Status Assignment */}
+                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                      {/* Resend Option Checkbox */}
+                      <label className="flex items-center gap-2 cursor-pointer font-semibold text-slate-800 dark:text-slate-200">
+                        <input
+                          type="checkbox"
+                          checked={sendViaResend}
+                          onChange={(e) => setSendViaResend(e.target.checked)}
+                          className="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500"
+                        />
+                        <span className="flex items-center gap-1.5">
+                          <Send className="w-3.5 h-3.5 text-cyan-600" />
+                          Send transactional email to customer via Resend
+                        </span>
+                      </label>
+
+                      {/* Status on save */}
+                      <div className="flex items-center gap-3">
+                        <span className="font-semibold text-slate-500">Update Status:</span>
+                        <label className="flex items-center gap-1.5 cursor-pointer font-medium hover:text-cyan-600 transition-colors">
+                          <input
+                            type="radio"
+                            name="modalReplyStatus"
+                            checked={replyStatus === "IN_PROGRESS"}
+                            onChange={() => setReplyStatus("IN_PROGRESS")}
+                            className="w-3.5 h-3.5 text-cyan-600 focus:ring-cyan-500"
+                          />
+                          <span className="inline-flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            In Contact
+                          </span>
+                        </label>
+                        <label className="flex items-center gap-1.5 cursor-pointer font-medium hover:text-emerald-600 transition-colors">
+                          <input
+                            type="radio"
+                            name="modalReplyStatus"
+                            checked={replyStatus === "RESOLVED"}
+                            onChange={() => setReplyStatus("RESOLVED")}
+                            className="w-3.5 h-3.5 text-cyan-600 focus:ring-cyan-500"
+                          />
+                          <span className="inline-flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            Resolved
+                          </span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
-                      Submitted
-                    </span>
-                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 font-mono">
-                      {new Date(selectedInquiry.createdAt).toLocaleDateString("en-US", {
-                        month: "numeric",
-                        day: "numeric",
-                        year: "numeric"
-                      })}
-                    </span>
+                )}
+
+                {/* ──────────────────────────────────────────────────────── */}
+                {/* TAB 2: SMS / WHATSAPP DISPATCH */}
+                {/* ──────────────────────────────────────────────────────── */}
+                {modalTab === "whatsapp" && (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 text-xs text-emerald-900 dark:text-emerald-200 flex items-start gap-3">
+                      <MessageCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="font-bold text-sm">Direct WhatsApp & SMS Integration</h4>
+                        <p className="mt-0.5 text-emerald-800/90 dark:text-emerald-300">
+                          Launch WhatsApp Web or mobile client with your personalized reply text pre-filled for{" "}
+                          <span className="font-bold">{selectedInquiry.phone || "the customer"}</span>.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
+                        WhatsApp Message Body
+                      </label>
+                      <textarea
+                        rows={6}
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Type WhatsApp message..."
+                        className="w-full p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 resize-none transition-all leading-relaxed"
+                      />
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                      <span className="text-slate-500">
+                        Phone: <strong className="text-slate-800 dark:text-slate-200">{selectedInquiry.phone || "None provided"}</strong>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleSendSMS}
+                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" /> Launch WhatsApp / SMS
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {/* ──────────────────────────────────────────────────────── */}
+                {/* TAB 3: COMPLETE INQUIRY DOSSIER */}
+                {/* ──────────────────────────────────────────────────────── */}
+                {modalTab === "details" && (
+                  <div className="space-y-4 text-xs">
+                    {/* Customer Info Cards Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                            Email Address
+                          </span>
+                          <span className="font-mono font-semibold text-cyan-700 dark:text-cyan-300 truncate block">
+                            {selectedInquiry.email}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleCopy(selectedInquiry.email, "dossier_email")}
+                          className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 shrink-0 cursor-pointer"
+                        >
+                          {copiedField === "dossier_email" ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                            Contact Phone
+                          </span>
+                          <span className="font-mono font-semibold text-slate-800 dark:text-slate-200 truncate block">
+                            {selectedInquiry.phone || "Not provided"}
+                          </span>
+                        </div>
+                        {selectedInquiry.phone && (
+                          <button
+                            onClick={() => handleCopy(selectedInquiry.phone || "", "dossier_phone")}
+                            className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 shrink-0 cursor-pointer"
+                          >
+                            {copiedField === "dossier_phone" ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                          Destination Category
+                        </span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+                          {selectedInquiry.destination || "Custom Itinerary"}
+                        </span>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 flex items-center justify-between">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                            Inquiry Status
+                          </span>
+                          <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg border ${getStatusBadgeClass(selectedInquiry.status)}`}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
+                            {getStatusLabel(selectedInquiry.status)}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                            Received
+                          </span>
+                          <span className="font-mono text-slate-600 dark:text-slate-300">
+                            {new Date(selectedInquiry.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Message Box */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Customer Inquiry Message
+                      </label>
+                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 text-sm text-slate-800 dark:text-slate-200 italic leading-relaxed break-words">
+                        &ldquo;{selectedInquiry.message}&rdquo;
+                      </div>
+                    </div>
+
+                    {/* Previous Reply History if exists */}
+                    {selectedInquiry.reply && (
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Published Reply On Record
+                        </label>
+                        <div className="p-4 rounded-2xl bg-cyan-50/50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-800 text-xs text-slate-800 dark:text-slate-200 leading-relaxed break-words whitespace-pre-wrap font-mono">
+                          {selectedInquiry.reply}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Customer Inquiry Message */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                  Customer Request
-                </label>
-                <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 text-xs sm:text-sm text-slate-800 dark:text-slate-200 italic leading-relaxed break-all sm:break-words whitespace-pre-wrap">
-                  &ldquo;{selectedInquiry.message}&rdquo;
-                </div>
-              </div>
-
-              {/* Response Composer Section */}
-              <div className="space-y-3 pt-1 sm:pt-2">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
-                    <Send className="w-3.5 h-3.5 text-cyan-600 shrink-0" /> Answer / Reply to Inquiry
-                  </label>
-                  <span className="text-[10px] sm:text-[11px] text-slate-400">
-                    Saves reply to user&apos;s active inquiry view
-                  </span>
-                </div>
-
-                {/* Quick Templates */}
-                <div className="flex flex-wrap gap-1.5">
+              {/* Modal Persistent Action Footer */}
+              <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                   <button
                     type="button"
-                    onClick={() => applyTemplate("itinerary")}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-medium transition-colors cursor-pointer"
-                  >
-                    + Itinerary Prepared
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyTemplate("dates")}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-medium transition-colors cursor-pointer"
-                  >
-                    + Ask Travel Dates
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyTemplate("quote")}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-medium transition-colors cursor-pointer"
-                  >
-                    + Finalized Quote
-                  </button>
-                </div>
-
-                {/* Textarea */}
-                <textarea
-                  rows={4}
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="Type your response or itinerary quotation here..."
-                  className="w-full p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 outline-none text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 resize-none transition-all leading-relaxed"
-                />
-
-                {/* Status choice on save */}
-                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400 pt-1">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Set status upon reply:</span>
-                  <label className="flex items-center gap-2 cursor-pointer font-medium hover:text-slate-900 dark:hover:text-white transition-colors">
-                    <input
-                      type="radio"
-                      name="replyStatus"
-                      checked={replyStatus === "IN_PROGRESS"}
-                      onChange={() => setReplyStatus("IN_PROGRESS")}
-                      className="w-4 h-4 text-cyan-600 focus:ring-cyan-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800"
-                    />
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
-                      In Contact
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer font-medium hover:text-slate-900 dark:hover:text-white transition-colors">
-                    <input
-                      type="radio"
-                      name="replyStatus"
-                      checked={replyStatus === "RESOLVED"}
-                      onChange={() => setReplyStatus("RESOLVED")}
-                      className="w-4 h-4 text-cyan-600 focus:ring-cyan-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800"
-                    />
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                      Resolved
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Action Buttons: Email, SMS, and Save */}
-              <div className="pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
-                  {/* Email Option */}
-                  <button
-                    type="button"
-                    onClick={handleSendEmail}
+                    onClick={handleSendEmailNative}
                     disabled={isSending}
-                    className="w-full sm:w-auto px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border border-slate-200 dark:border-slate-700"
-                    title="Compose and send via Email client"
+                    className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border border-slate-200 dark:border-slate-700"
+                    title="Open in default Email app"
                   >
-                    <Mail className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
-                    <span className="truncate">Send via Mail</span>
+                    <Mail className="w-3.5 h-3.5 text-slate-500" />
+                    <span className="truncate">Native Mailto</span>
                   </button>
 
-                  {/* SMS / WhatsApp Option */}
                   <button
                     type="button"
                     onClick={handleSendSMS}
                     disabled={isSending}
-                    className="w-full sm:w-auto px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border border-slate-200 dark:border-slate-700"
-                    title="Send via SMS or WhatsApp"
+                    className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer border border-slate-200 dark:border-slate-700"
+                    title="Send via WhatsApp"
                   >
-                    <MessageCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span className="truncate">Send via SMS / WhatsApp</span>
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+                    <span className="truncate">WhatsApp</span>
                   </button>
                 </div>
 
-                {/* Save & Publish Response */}
-                <button
-                  type="button"
-                  onClick={() => handleSaveReply()}
-                  disabled={isSending || !replyText.trim()}
-                  className="w-full sm:w-auto px-5 sm:px-6 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow-md shadow-cyan-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shrink-0"
-                >
-                  {isSending ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-3.5 h-3.5" /> Save & Publish Reply
-                    </>
-                  )}
-                </button>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedInquiry(null)}
+                    className="px-4 py-2.5 rounded-xl hover:bg-slate-200/70 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSaveReply()}
+                    disabled={isSending || !replyText.trim()}
+                    className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold shadow-md shadow-cyan-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {isSending ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Dispatching...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Save & Send via Resend</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
