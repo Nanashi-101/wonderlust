@@ -78,7 +78,6 @@ export default async function AdminHeader() {
               </div>
 
               <LogoutLink
-                postLogoutRedirectURL="/"
                 className="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition-colors ml-1 cursor-pointer"
                 title="Log Out"
               >
