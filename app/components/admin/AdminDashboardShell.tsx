@@ -141,8 +141,13 @@ export default function AdminDashboardShell({
     }
   };
 
-  const handleReplyToInquiry = async (id: string, reply: string, status: any = "IN_PROGRESS") => {
-    const res = await replyToInquiryAction(id, reply, status);
+  const handleReplyToInquiry = async (
+    id: string,
+    reply: string,
+    status: any = "IN_PROGRESS",
+    options?: { subject?: string; sendEmail?: boolean }
+  ) => {
+    const res = await replyToInquiryAction(id, reply, status, options);
     if (res.success && res.inquiry) {
       setInquiries((prev) =>
         prev.map((inq) =>
