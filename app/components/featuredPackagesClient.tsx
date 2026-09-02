@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import type { LocalisedPackage } from "@/lib/package-utils";
 
 interface Props {
@@ -14,7 +14,6 @@ interface Props {
 
 export default function FeaturedPackagesClient({ packages }: Props) {
   const t = useTranslations("FeaturedPackages");
-  const locale = useLocale();
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -99,7 +98,7 @@ export default function FeaturedPackagesClient({ packages }: Props) {
                   </div>
 
                   <Link
-                    href={`/${locale}/packages`}
+                    href="/packages"
                     className="text-sm font-medium group-hover:translate-x-2 transition-transform duration-300 cursor-pointer"
                   >
                     {t("explore")}
@@ -113,7 +112,7 @@ export default function FeaturedPackagesClient({ packages }: Props) {
         {/* View All Button */}
         <div className="mt-20 text-center">
           <Link
-            href={`/${locale}/packages`}
+            href="/packages"
             className="group inline-flex items-center text-sm font-medium tracking-wide cursor-pointer"
           >
             {t("viewAll")}
