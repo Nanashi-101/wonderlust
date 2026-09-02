@@ -122,7 +122,7 @@ export default function NavbarClient({ user, isAuth, isAdmin = false }: NavbarCl
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-neutral-100" />
                     <DropdownMenuItem asChild className="cursor-pointer rounded-lg py-2.5 focus:bg-red-50 focus:text-red-600 text-red-500">
-                      <LogoutLink postLogoutRedirectURL="/" className="flex items-center w-full">
+                      <LogoutLink className="flex items-center w-full">
                         <LogOut className="w-4 h-4 mr-3" />
                         <span className="font-medium">{t('logout')}</span>
                       </LogoutLink>
@@ -231,7 +231,7 @@ export default function NavbarClient({ user, isAuth, isAdmin = false }: NavbarCl
                       <span className="text-white text-xs">{t('myBookings')}</span>
                     </Link>
                   </div>
-                  <LogoutLink postLogoutRedirectURL="/" className="block w-full p-4 rounded-2xl bg-red-500/20 text-red-500 text-center font-bold">
+                  <LogoutLink className="block w-full p-4 rounded-2xl bg-red-500/20 text-red-500 text-center font-bold">
                     {t('logout')}
                   </LogoutLink>
 
