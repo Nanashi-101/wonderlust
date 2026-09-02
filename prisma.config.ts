@@ -8,8 +8,12 @@ export default defineConfig({
   migrations: {
     path: "prisma/migrations",
   },
+  engine: "classic",
   datasource: {
-    url: process.env["DIRECT_URL"] ?? (() => {
+    url: process.env["DATABASE_URL"] ?? (() => {
+      throw new Error("DATABASE_URL environment variable is not set");
+    })(),
+    directUrl: process.env["DIRECT_URL"] ?? (() => {
       throw new Error("DIRECT_URL environment variable is not set");
     })(),
   },
