@@ -6,6 +6,7 @@ import {
   getAdminDashboardStats,
   getInquiriesAction,
   getAdminUsersAction,
+  getAllBookingsAction,
 } from "@/lib/actions/admin";
 import { getCurrentAdmin } from "@/lib/auth/admin";
 
@@ -33,11 +34,12 @@ export default async function AdminDashboardPage({
   const kindeUser = await getUser();
 
   // Fetch dashboard data — the admin directory is Super Admin-only, so skip it otherwise
-  const [stats, packages, inquiries, admins] = await Promise.all([
+  const [stats, packages, inquiries, admins, bookings] = await Promise.all([
     getAdminDashboardStats(),
     getPackages(),
     getInquiriesAction(),
     isSuperAdmin ? getAdminUsersAction() : Promise.resolve([]),
+    getAllBookingsAction(),
   ]);
 
   return (
@@ -46,6 +48,7 @@ export default async function AdminDashboardPage({
       initialPackages={packages}
       initialInquiries={inquiries}
       initialAdmins={admins}
+      initialBookings={bookings}
       user={{ name: admin.name || kindeUser?.given_name || "Admin", email: admin.email, picture: kindeUser?.picture || null, role: admin.role }}
     />
   );
