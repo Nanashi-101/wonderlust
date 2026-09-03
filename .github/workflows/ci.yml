@@ -1,0 +1,126 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+env:
+  # Build-time only — no live DB/Kinde/R2 needed for lint/typecheck/unit/build.
+  # `prisma generate` just needs DATABASE_URL to be present, not reachable.
+  # instrumentation.ts (lib/env.ts validation) only runs at server *boot*
+  # (npm start), never during `next build`, so these dummy values are enough.
+  DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
+  DIRECT_URL: "postgresql://ci:ci@localhost:5432/ci"
+  KINDE_CLIENT_ID: "ci-placeholder"
+  KINDE_CLIENT_SECRET: "ci-placeholder"
+  KINDE_ISSUER_URL: "https://ci-placeholder.kinde.com"
+  KINDE_SITE_URL: "http://localhost:3000"
+  CLOUDFLARE_R2_ACCOUNT_ID: "ci-placeholder"
+  CLOUDFLARE_R2_ACCESS_KEY_ID: "ci-placeholder"
+  CLOUDFLARE_R2_SECRET_ACCESS_KEY: "ci-placeholder"
+  CLOUDFLARE_R2_BUCKET_NAME: "ci-placeholder"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: "npm" }
+      - run: npm ci
+      - run: npm run lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: "npm" }
+      - run: npm ci
+      - run: npm run typecheck
+
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: "npm" }
+      - run: npm ci
+      - run: npm test
+
+  # Real-DB booking/payment integration tests (§7 "Booking rules", "Payments",
+  # "Webhooks") land once M4-M6 are implemented. This service container is
+  # wired up ahead of that so those tests just need to be added, not a new
+  # CI stage — they'd run `prisma db push` against this ephemeral container,
+  # never against a real database.
+  # integration:
+  #   runs-on: ubuntu-latest
+  #   services:
+  #     postgres:
+  #       image: postgres:16-alpine
+  #       env:
+  #         POSTGRES_USER: ci
+  #         POSTGRES_PASSWORD: ci
+  #         POSTGRES_DB: ci
+  #       ports: ["5432:5432"]
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 5s
+  #         --health-timeout 5s
+  #         --health-retries 10
+
+  build:
+    needs: [lint, typecheck, unit]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: "npm" }
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-build-${{ github.sha }}
+          restore-keys: next-build-
+
+  e2e:
+    needs: [build]
+    runs-on: ubuntu-latest
+    # The smoke tests hit pages that read from Prisma (featured packages on
+    # the homepage, the packages listing) — this ephemeral container is NOT
+    # the live database, `prisma db push` + seed run fresh against it below.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
+      DIRECT_URL: "postgresql://ci:ci@localhost:5432/ci"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: "npm" }
+      - run: npm ci
+      - run: npx prisma db push
+      - run: npm run db:seed
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npx playwright test --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
