@@ -28,9 +28,31 @@ enum Difficulty {
 
 enum BookingStatus {
   PENDING
+  AWAITING_PAYMENT
   CONFIRMED
   CANCELLED
   COMPLETED
+  REFUNDED
+}
+
+enum Currency {
+  INR
+  EUR
+  USD
+}
+
+enum PaymentProvider {
+  STRIPE
+  RAZORPAY
+}
+
+enum PaymentStatus {
+  CREATED
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
 }
 
 // ─────────────────────────────────────────
@@ -50,6 +72,7 @@ model User {
 
   bookings             Booking[]
   generatedItineraries GeneratedItinerary[]
+  reviews              Review[]
 }
 
 // ─────────────────────────────────────────
@@ -70,7 +93,8 @@ model Package {
   durationNights Int
   difficulty     Difficulty
   maxAltitudeFt  Int?
-  priceFrom      Int             // in INR (rupees)
+  priceFromMinor Int             // minor units (paise for INR, cents for EUR/USD) — NEVER a float
+  currency       Currency        @default(INR)
   featured       Boolean         @default(false)
   active         Boolean         @default(true)
 
@@ -86,6 +110,7 @@ model Package {
   updatedAt      DateTime        @updatedAt
 
   bookings       Booking[]
+  reviews        Review[]
 
   @@index([category])
   @@index([featured])
@@ -98,23 +123,73 @@ model Package {
 // ─────────────────────────────────────────
 
 model Booking {
-  id         String        @id @default(cuid())
-  userId     String
-  packageId  String
-  status     BookingStatus @default(PENDING)
-  startDate  DateTime?
-  guests     Int           @default(1)
-  totalPrice Int           // in INR (rupees)
-  notes      String?       @db.Text
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  id              String        @id @default(cuid())
+  userId          String
+  packageId       String
+  status          BookingStatus @default(PENDING)
+  startDate       DateTime?
+  guests          Int           @default(1)
+  totalPriceMinor Int           // minor units — server-computed, authoritative. NEVER a float.
+  currency        Currency      @default(INR)
+  notes           String?       @db.Text
+  cancelledAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  package Package @relation(fields: [packageId], references: [id], onDelete: Restrict)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package  Package   @relation(fields: [packageId], references: [id], onDelete: Restrict)
+  payments Payment[]
+  review   Review?
 
   @@index([userId])
   @@index([packageId])
   @@index([status])
+}
+
+// ─────────────────────────────────────────
+// PAYMENT
+// One row per checkout attempt for a Booking — a
+// retried/failed-then-retried booking can have more
+// than one. The webhook, not the browser redirect, is
+// the source of truth for `status`; see M5/M6 in
+// CLAUDE.md before touching this model or its consumers.
+// ─────────────────────────────────────────
+
+model Payment {
+  id                String          @id @default(cuid())
+  bookingId         String
+  provider          PaymentProvider
+  providerOrderId   String?                           // Stripe session id / Razorpay order id
+  providerPaymentId String?         @unique
+  amountMinor       Int
+  refundedMinor     Int             @default(0)
+  currency          Currency
+  status            PaymentStatus   @default(CREATED)
+  failureReason     String?
+  raw               Json?                             // last provider payload, for audit
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId, status])
+}
+
+// ─────────────────────────────────────────
+// WEBHOOK EVENT
+// Idempotency ledger for payment-provider webhooks.
+// `providerEventId` is unique so a retried delivery of
+// the same event is a guaranteed no-op — see handlePaymentEvent.
+// ─────────────────────────────────────────
+
+model WebhookEvent {
+  id              String          @id @default(cuid())
+  provider        PaymentProvider
+  providerEventId String          @unique
+  type            String
+  payload         Json
+  processedAt     DateTime?
+  createdAt       DateTime        @default(now())
 }
 
 // ─────────────────────────────────────────
@@ -131,6 +206,10 @@ model GeneratedItinerary {
   title       String?
   preferences Json     // { destination, budget, duration, groupSize, interests, ... }
   itinerary   Json     // AI-generated structured itinerary
+  totalPriceMinor Int? // computed from real Package components, never model-set
+  currency    Currency @default(INR)
+  // Draft until an admin approves it — never bookable before then. See A2.
+  approved    Boolean  @default(false)
   s3Key       String?  // e.g. "itineraries/userId/itineraryId.pdf"
   createdAt   DateTime @default(now())
 
@@ -183,5 +262,30 @@ model AdminUser {
   updatedAt DateTime  @updatedAt
 
   @@index([email])
+}
+
+// ─────────────────────────────────────────
+// REVIEW
+// One review per Booking (verified-purchase gate) —
+// `bookingId` is unique so a customer can't review the
+// same booking twice. Not visible publicly until an
+// admin sets `published = true`.
+// ─────────────────────────────────────────
+
+model Review {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  userId    String
+  packageId String
+  rating    Int                                       // 1-5, validated in the app layer
+  comment   String?  @db.Text
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  package Package @relation(fields: [packageId], references: [id])
+
+  @@index([packageId, published])
 }
 

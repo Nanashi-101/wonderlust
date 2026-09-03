@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PackageCategory, Difficulty, type Package } from "@prisma/client";
+import { fromMinor } from "@/lib/payments/money";
 
 export const packageInputSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -11,6 +12,8 @@ export const packageInputSchema = z.object({
   durationNights: z.number().min(0, "Duration nights must be 0 or more"),
   difficulty: z.nativeEnum(Difficulty),
   maxAltitudeFt: z.number().nullable().optional(),
+  // Rupees, as an admin types it — converted to Package.priceFromMinor (paise) at the
+  // Server Action boundary via toMinor(), never stored as-is.
   priceFrom: z.number().min(1, "Price must be greater than 0"),
   featured: z.boolean().default(false),
   active: z.boolean().default(true),
@@ -59,7 +62,7 @@ export function localisePackage(pkg: Package, locale: string) {
     description: override?.description ?? pkg.description,
     imagePath: getImageUrl(pkg.imagePath),
     // Format price for display
-    priceDisplay: `Starting ₹${pkg.priceFrom.toLocaleString("en-IN")}`,
+    priceDisplay: `Starting ₹${fromMinor(pkg.priceFromMinor, pkg.currency).toLocaleString("en-IN")}`,
     // Format duration for display
     durationDisplay: `${pkg.durationDays} Days · ${pkg.durationNights} Nights`,
     // Format altitude for display
