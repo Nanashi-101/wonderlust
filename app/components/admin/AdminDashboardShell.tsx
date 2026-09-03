@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import type { Booking, Package as PrismaPackage, User } from "@prisma/client";
+
+type BookingRow = Booking & { package: PrismaPackage; user: User };
 
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -8,6 +11,7 @@ import {
   Package,
   Inbox,
   ShieldCheck,
+  CalendarCheck,
   Plus,
   ArrowUpRight,
   Sparkles,
@@ -27,6 +31,7 @@ import AdminOverviewPanel from "./AdminOverviewPanel";
 import AdminPackagesPanel from "./AdminPackagesPanel";
 import AdminEnquiriesPanel from "./AdminEnquiriesPanel";
 import AdminUsersPanel from "./AdminUsersPanel";
+import AdminBookingsPanel from "./AdminBookingsPanel";
 import CreatorStudioWizard from "./CreatorStudioWizard";
 import AdminSearchModal from "./AdminSearchModal";
 import AdminNotifications from "./AdminNotifications";
@@ -41,9 +46,11 @@ import {
   replyToInquiryAction,
   grantAdminRoleAction,
   removeAdminRoleAction,
+  refundBookingAction,
+  adminCancelBookingAction,
 } from "@/lib/actions/admin";
 
-export type AdminTab = "overview" | "packages" | "enquiries" | "admins";
+export type AdminTab = "overview" | "packages" | "bookings" | "enquiries" | "admins";
 
 
 const NAV_ITEMS: Array<{
@@ -66,6 +73,12 @@ const NAV_ITEMS: Array<{
     icon: Package,
   },
   {
+    id: "bookings",
+    label: "Bookings",
+    sublabel: "Reservations & refunds",
+    icon: CalendarCheck,
+  },
+  {
     id: "enquiries",
     label: "Inquiries & Quotes",
     sublabel: "Customer messages",
@@ -84,6 +97,7 @@ interface AdminDashboardShellProps {
   initialPackages: any[];
   initialInquiries: any[];
   initialAdmins: any[];
+  initialBookings: BookingRow[];
   user: { name: string; email: string; picture: string | null; role: string } | null;
 }
 
@@ -92,6 +106,7 @@ export default function AdminDashboardShell({
   initialPackages,
   initialInquiries,
   initialAdmins,
+  initialBookings,
   user,
 }: AdminDashboardShellProps) {
   const isSuperAdmin = user?.role === "SUPER_ADMIN";
@@ -101,6 +116,7 @@ export default function AdminDashboardShell({
   const [packages, setPackages] = useState<any[]>(initialPackages);
   const [inquiries, setInquiries] = useState<any[]>(initialInquiries);
   const [admins, setAdmins] = useState<any[]>(initialAdmins);
+  const [bookings, setBookings] = useState<BookingRow[]>(initialBookings);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
@@ -141,8 +157,13 @@ export default function AdminDashboardShell({
     }
   };
 
-  const handleReplyToInquiry = async (id: string, reply: string, status: any = "IN_PROGRESS") => {
-    const res = await replyToInquiryAction(id, reply, status);
+  const handleReplyToInquiry = async (
+    id: string,
+    reply: string,
+    status: any = "IN_PROGRESS",
+    options?: { subject?: string; sendEmail?: boolean }
+  ) => {
+    const res = await replyToInquiryAction(id, reply, status, options);
     if (res.success && res.inquiry) {
       setInquiries((prev) =>
         prev.map((inq) =>
@@ -167,6 +188,26 @@ export default function AdminDashboardShell({
     if (res.success) {
       setAdmins((prev) => prev.filter((a) => a.id !== id));
     }
+  };
+
+  const handleRefundBooking = async (bookingId: string) => {
+    const res = await refundBookingAction(bookingId);
+    if (res.success && res.fullyRefunded) {
+      setBookings((prev) =>
+        prev.map((b) => (b.id === bookingId ? { ...b, status: "REFUNDED" } : b))
+      );
+    }
+    return res;
+  };
+
+  const handleCancelBooking = async (bookingId: string) => {
+    const res = await adminCancelBookingAction(bookingId);
+    if (res.success) {
+      setBookings((prev) =>
+        prev.map((b) => (b.id === bookingId ? { ...b, status: "CANCELLED" } : b))
+      );
+    }
+    return res;
   };
 
   // Render Creator Studio (full-screen takeover)
@@ -196,6 +237,8 @@ export default function AdminDashboardShell({
     switch (activeTab) {
       case "packages":
         return "Search expeditions (Ctrl+K)...";
+      case "bookings":
+        return "Search bookings (Ctrl+K)...";
       case "enquiries":
         return "Search customer inquiries (Ctrl+K)...";
       case "admins":
@@ -488,6 +531,23 @@ export default function AdminDashboardShell({
                   }}
                   onEditPackage={(pkg) => setEditingPackage(pkg)}
                   onDeletePackage={handleDeletePackage}
+                />
+              </motion.div>
+            )}
+
+            {activeTab === "bookings" && (
+              <motion.div
+                key="bookings"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="w-full max-w-full min-w-0"
+              >
+                <AdminBookingsPanel
+                  bookings={bookings}
+                  onRefund={handleRefundBooking}
+                  onCancel={handleCancelBooking}
                 />
               </motion.div>
             )}

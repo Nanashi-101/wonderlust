@@ -118,5 +118,41 @@
     "filterManali": "মানালি",
     "filterRishikesh": "ঋষিকেশ",
     "filterLadakh": "লাদাখ"
+  },
+  "NotFound": {
+    "eyebrow": "৪০৪",
+    "heading": "আপনি পথ হারিয়ে ফেলেছেন",
+    "description": "এই পথ কোথাও যায় না — পাতাটি সরিয়ে ফেলা হয়েছে, অথবা ইউআরএল পাহাড়ে কোথাও ভুল পথে চলে গেছে।",
+    "cta": "বেস ক্যাম্পে ফিরে যান"
+  },
+  "Bookings": {
+    "title": "আমার বুকিং",
+    "emptyTitle": "এখনো কোনো বুকিং নেই",
+    "emptyDescription": "আপনার এখনো কোনো সক্রিয় বুকিং নেই। আপনার যাত্রা শুরু করতে আমাদের অভিযানগুলি অন্বেষণ করুন!",
+    "exploreCta": "প্যাকেজ দেখুন",
+    "guests": "ভ্রমণকারী",
+    "total": "মোট",
+    "departure": "যাত্রার তারিখ",
+    "departureUnset": "নমনীয়",
+    "cancel": "বুকিং বাতিল করুন",
+    "cancelling": "বাতিল করা হচ্ছে…",
+    "cancelConfirm": "আপনি কি এই বুকিং বাতিল করতে চান?",
+    "statusPending": "অপেক্ষমাণ",
+    "statusAwaitingPayment": "পেমেন্টের অপেক্ষায়",
+    "statusConfirmed": "নিশ্চিত",
+    "statusCancelled": "বাতিল",
+    "statusCompleted": "সম্পন্ন",
+    "statusRefunded": "ফেরত",
+    "payNow": "এখনই পরিশোধ করুন",
+    "payNowPending": "চেকআউট শুরু হচ্ছে…"
+  },
+  "Review": {
+    "leaveReview": "রিভিউ লিখুন",
+    "alreadyReviewed": "রিভিউ করা হয়েছে",
+    "rating": "রেটিং",
+    "comment": "মন্তব্য (ঐচ্ছিক)",
+    "submit": "রিভিউ জমা দিন",
+    "submitting": "জমা হচ্ছে…",
+    "thankYou": "আপনার রিভিউর জন্য ধন্যবাদ!"
   }
 }

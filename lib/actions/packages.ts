@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { packageInputSchema, type PackageInput } from "@/lib/package-utils";
 import { getCurrentAdmin } from "@/lib/auth/admin";
+import { toMinor } from "@/lib/payments/money";
 import type { PackageCategory } from "@prisma/client";
 
 const NOT_AUTHORIZED = "Not authorized. Admin access required.";
@@ -35,10 +36,13 @@ export async function createPackageAction(input: PackageInput) {
       };
     }
 
+    const { priceFrom, ...rest } = validated;
+
     const created = await prisma.package.create({
       data: {
-        ...validated,
+        ...rest,
         slug: formattedSlug,
+        priceFromMinor: toMinor(priceFrom, "INR"),
       },
     });
 
@@ -107,11 +111,14 @@ export async function updatePackageAction(id: string, input: PackageInput) {
       .replace(/[^a-z0-9-]/g, "-")
       .replace(/-+/g, "-");
 
+    const { priceFrom, ...rest } = validated;
+
     const updated = await prisma.package.update({
       where: { id },
       data: {
-        ...validated,
+        ...rest,
         slug: formattedSlug,
+        priceFromMinor: toMinor(priceFrom, "INR"),
       },
     });
 
