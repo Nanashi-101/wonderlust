@@ -2,21 +2,25 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/app/components/LanguageSwitcher";
 import { Menu, X } from "lucide-react";
 
 export default function GalleryNavbar() {
   const t = useTranslations('Navigation');
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const isPackages = pathname === "/packages" || pathname.startsWith("/packages");
+  const isGallery = pathname === "/gallery" || pathname.startsWith("/gallery");
+
   const navLinks = [
-    { href: "/#about", label: t('home') },
-    { href: "/#destination", label: t('destination') },
-    { href: "/#featured-packages", label: t('packages') },
-    { href: "/gallery", label: t('gallery'), active: true },
-    { href: "/#contact", label: t('contact') },
+    { href: "/#about", label: t('home'), active: false },
+    { href: "/#destination", label: t('destination'), active: false },
+    { href: "/packages", label: t('packages'), active: isPackages },
+    { href: "/gallery", label: t('gallery'), active: isGallery },
+    { href: "/#contact", label: t('contact'), active: false },
   ];
 
   return (
