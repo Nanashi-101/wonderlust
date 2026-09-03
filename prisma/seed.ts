@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 // ─────────────────────────────────────────────────────────────────────────────
 // Seed Data
 // Migrated from app/lib/utils.ts — all 5 existing packages.
-// Prices stored in INR (rupees). Images reference /public paths.
+// Prices stored in minor units (paise) — see CLAUDE.md M2. Images reference /public paths.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const packages = [
@@ -18,7 +18,7 @@ const packages = [
     durationNights: 7,
     difficulty: Difficulty.Advanced,
     maxAltitudeFt: 17582,
-    priceFrom: 42999,
+    priceFromMinor: 4299900,
     featured: true,
     active: true,
     title: "Ladakh High-Altitude Expedition",
@@ -41,7 +41,7 @@ const packages = [
     durationNights: 12,
     difficulty: Difficulty.Moderate,
     maxAltitudeFt: 9000,
-    priceFrom: 22999,
+    priceFromMinor: 2299900,
     featured: true,
     active: true,
     title: "Kashmir Alpine Retreat",
@@ -64,7 +64,7 @@ const packages = [
     durationNights: 4,
     difficulty: Difficulty.Intermediate,
     maxAltitudeFt: 13050,
-    priceFrom: 24499,
+    priceFromMinor: 2449900,
     featured: true,
     active: true,
     title: "Manali Adventure Circuit",
@@ -87,7 +87,7 @@ const packages = [
     durationNights: 5,
     difficulty: Difficulty.Easy,
     maxAltitudeFt: null,
-    priceFrom: 11111,
+    priceFromMinor: 1111100,
     featured: true,
     active: true,
     title: "Puri Divine and Coastal",
@@ -110,7 +110,7 @@ const packages = [
     durationNights: 4,
     difficulty: Difficulty.Easy,
     maxAltitudeFt: null,
-    priceFrom: 18999,
+    priceFromMinor: 1899900,
     featured: true,
     active: true,
     title: "Rishikesh Spiritual Sanctuary",
@@ -133,7 +133,7 @@ const packages = [
     durationNights: 5,
     difficulty: Difficulty.Moderate,
     maxAltitudeFt: 11200,
-    priceFrom: 28999,
+    priceFromMinor: 2899900,
     featured: true,
     active: true,
     title: "Kashmir All-Women Himalayan Escape",

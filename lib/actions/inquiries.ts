@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { sendInquiryEmails } from "@/lib/email/inquiries";
 
 export interface CreateInquiryInput {
   name: string;
@@ -97,6 +99,26 @@ export async function createInquiryAction(input: CreateInquiryInput) {
       revalidatePath("/[locale]/admin");
     } catch {
       // Ignore outside request context
+    }
+
+    // Confirmation to the customer, alert to the admin team. Scheduled with
+    // after() so the Resend round-trip doesn't delay the form response, and
+    // guarded because the enquiry is already persisted - a mail problem must
+    // never turn a successful submission into an error for the visitor.
+    try {
+      after(async () => {
+        await sendInquiryEmails({
+          name: trimmedName,
+          email: trimmedEmail,
+          message: trimmedMessage,
+          phone: trimmedPhone || null,
+          destination: inquiry.destination,
+          type: inquiry.type,
+          submittedAt: inquiry.createdAt,
+        });
+      });
+    } catch (error) {
+      console.error("[email] could not schedule enquiry emails:", error);
     }
 
     return {

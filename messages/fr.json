@@ -118,5 +118,41 @@
     "filterManali": "Manali",
     "filterRishikesh": "Rishikesh",
     "filterLadakh": "Ladakh"
+  },
+  "NotFound": {
+    "eyebrow": "404",
+    "heading": "Vous avez quitté le sentier",
+    "description": "Ce chemin ne mène nulle part — la page a peut-être été déplacée, ou l'URL s'est perdue quelque part dans les montagnes.",
+    "cta": "Retour au camp de base"
+  },
+  "Bookings": {
+    "title": "Mes Réservations",
+    "emptyTitle": "Aucune réservation",
+    "emptyDescription": "Vous n'avez pas encore de réservation active. Explorez nos expéditions pour commencer votre voyage !",
+    "exploreCta": "Voir les Forfaits",
+    "guests": "Voyageurs",
+    "total": "Total",
+    "departure": "Date de départ",
+    "departureUnset": "Flexible",
+    "cancel": "Annuler la réservation",
+    "cancelling": "Annulation…",
+    "cancelConfirm": "Voulez-vous vraiment annuler cette réservation ?",
+    "statusPending": "En attente",
+    "statusAwaitingPayment": "Paiement en attente",
+    "statusConfirmed": "Confirmée",
+    "statusCancelled": "Annulée",
+    "statusCompleted": "Terminée",
+    "statusRefunded": "Remboursée",
+    "payNow": "Payer maintenant",
+    "payNowPending": "Démarrage du paiement…"
+  },
+  "Review": {
+    "leaveReview": "Laisser un avis",
+    "alreadyReviewed": "Avis laissé",
+    "rating": "Note",
+    "comment": "Commentaire (optionnel)",
+    "submit": "Envoyer l'avis",
+    "submitting": "Envoi…",
+    "thankYou": "Merci pour votre avis !"
   }
 }

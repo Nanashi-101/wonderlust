@@ -59,7 +59,7 @@ interface InquiryRecord {
 interface AdminEnquiriesPanelProps {
   inquiries: InquiryRecord[];
   onUpdateStatus: (id: string, status: any) => Promise<void>;
-  onReplyInquiry?: (id: string, reply: string, status?: any) => Promise<{ success: boolean; error?: string }>;
+  onReplyInquiry?: (id: string, reply: string, status?: any, options?: { subject?: string; sendEmail?: boolean }) => Promise<{ success: boolean; error?: string }>;
 }
 
 export default function AdminEnquiriesPanel({
@@ -193,7 +193,13 @@ export default function AdminEnquiriesPanel({
   };
 
   // Submit reply & save to DB (Resend trigger ready)
-  const handleSaveReply = async (customStatus?: "IN_PROGRESS" | "RESOLVED") => {
+  // `sendEmail` defaults to the Email Studio toggle. The WhatsApp and native
+  // mail-client buttons pass false explicitly: the admin is delivering the
+  // message themselves, so sending via Resend as well would double up.
+  const handleSaveReply = async (
+    customStatus?: "IN_PROGRESS" | "RESOLVED",
+    sendEmail: boolean = sendViaResend
+  ) => {
     if (!selectedInquiry || !replyText.trim()) return;
     setIsSending(true);
     setSuccessNotice("");
@@ -201,7 +207,10 @@ export default function AdminEnquiriesPanel({
     const targetStatus = customStatus || replyStatus;
 
     if (onReplyInquiry) {
-      const res = await onReplyInquiry(selectedInquiry.id, replyText.trim(), targetStatus);
+      const res = await onReplyInquiry(selectedInquiry.id, replyText.trim(), targetStatus, {
+        subject: emailSubject.trim(),
+        sendEmail,
+      });
       if (res.success) {
         setSelectedInquiry({
           ...selectedInquiry,
@@ -209,7 +218,7 @@ export default function AdminEnquiriesPanel({
           status: targetStatus,
         });
         setSuccessNotice(
-          sendViaResend
+          sendEmail
             ? "Reply published & email queued for delivery via Resend!"
             : "Inquiry response saved successfully!"
         );
@@ -222,7 +231,7 @@ export default function AdminEnquiriesPanel({
   // Send Email via native client (fallback)
   const handleSendEmailNative = () => {
     if (!selectedInquiry) return;
-    handleSaveReply("IN_PROGRESS");
+    handleSaveReply("IN_PROGRESS", false);
     const subject = encodeURIComponent(emailSubject || `Wonderlust Expeditions - Inquiry Response (${selectedInquiry.destination || "Trip"})`);
     const body = encodeURIComponent(replyText);
     window.open(`mailto:${selectedInquiry.email}?subject=${subject}&body=${body}`, "_blank");
@@ -231,7 +240,7 @@ export default function AdminEnquiriesPanel({
   // Send SMS / WhatsApp
   const handleSendSMS = () => {
     if (!selectedInquiry) return;
-    handleSaveReply("IN_PROGRESS");
+    handleSaveReply("IN_PROGRESS", false);
 
     const cleanPhone = selectedInquiry.phone?.replace(/[^0-9+]/g, "") || "";
     const text = encodeURIComponent(

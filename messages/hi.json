@@ -118,5 +118,41 @@
     "filterManali": "मनाली",
     "filterRishikesh": "ऋषिकेश",
     "filterLadakh": "लद्दाख"
+  },
+  "NotFound": {
+    "eyebrow": "404",
+    "heading": "आप रास्ते से भटक गए हैं",
+    "description": "यह रास्ता कहीं नहीं जाता — या तो पेज हटा दिया गया है, या यूआरएल पहाड़ों में कहीं भटक गया।",
+    "cta": "बेस कैंप वापस जाएं"
+  },
+  "Bookings": {
+    "title": "मेरी बुकिंग्स",
+    "emptyTitle": "अभी तक कोई बुकिंग नहीं",
+    "emptyDescription": "आपकी अभी कोई सक्रिय बुकिंग नहीं है। अपनी यात्रा शुरू करने के लिए हमारे अभियानों को देखें!",
+    "exploreCta": "पैकेज देखें",
+    "guests": "यात्री",
+    "total": "कुल राशि",
+    "departure": "प्रस्थान तिथि",
+    "departureUnset": "लचीला",
+    "cancel": "बुकिंग रद्द करें",
+    "cancelling": "रद्द किया जा रहा है…",
+    "cancelConfirm": "क्या आप इस बुकिंग को रद्द करना चाहते हैं?",
+    "statusPending": "लंबित",
+    "statusAwaitingPayment": "भुगतान लंबित",
+    "statusConfirmed": "पुष्टि की गई",
+    "statusCancelled": "रद्द",
+    "statusCompleted": "पूर्ण",
+    "statusRefunded": "धनवापसी",
+    "payNow": "अभी भुगतान करें",
+    "payNowPending": "चेकआउट शुरू हो रहा है…"
+  },
+  "Review": {
+    "leaveReview": "समीक्षा लिखें",
+    "alreadyReviewed": "समीक्षा की गई",
+    "rating": "रेटिंग",
+    "comment": "टिप्पणी (वैकल्पिक)",
+    "submit": "समीक्षा सबमिट करें",
+    "submitting": "सबमिट हो रहा है…",
+    "thankYou": "आपकी समीक्षा के लिए धन्यवाद!"
   }
 }

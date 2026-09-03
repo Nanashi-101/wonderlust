@@ -118,5 +118,41 @@
     "filterManali": "Manali",
     "filterRishikesh": "Rishikesh",
     "filterLadakh": "Ladakh"
+  },
+  "NotFound": {
+    "eyebrow": "404",
+    "heading": "Zeszedłeś ze szlaku",
+    "description": "Ta ścieżka donikąd nie prowadzi — strona mogła zostać przeniesiona, albo adres URL zabłądził gdzieś w górach.",
+    "cta": "Wróć do bazy"
+  },
+  "Bookings": {
+    "title": "Moje Rezerwacje",
+    "emptyTitle": "Brak rezerwacji",
+    "emptyDescription": "Nie masz jeszcze żadnych aktywnych rezerwacji. Zacznij odkrywać nasze ekspedycje, aby rozpocząć podróż!",
+    "exploreCta": "Przeglądaj Pakiety",
+    "guests": "Podróżni",
+    "total": "Suma",
+    "departure": "Data wyjazdu",
+    "departureUnset": "Elastyczna",
+    "cancel": "Anuluj rezerwację",
+    "cancelling": "Anulowanie…",
+    "cancelConfirm": "Czy na pewno chcesz anulować tę rezerwację?",
+    "statusPending": "Oczekująca",
+    "statusAwaitingPayment": "Oczekuje na płatność",
+    "statusConfirmed": "Potwierdzona",
+    "statusCancelled": "Anulowana",
+    "statusCompleted": "Zakończona",
+    "statusRefunded": "Zwrócona",
+    "payNow": "Zapłać teraz",
+    "payNowPending": "Rozpoczynanie płatności…"
+  },
+  "Review": {
+    "leaveReview": "Zostaw opinię",
+    "alreadyReviewed": "Oceniono",
+    "rating": "Ocena",
+    "comment": "Komentarz (opcjonalnie)",
+    "submit": "Wyślij opinię",
+    "submitting": "Wysyłanie…",
+    "thankYou": "Dziękujemy za opinię!"
   }
 }

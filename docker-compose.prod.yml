@@ -1,0 +1,13 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        NEXT_PUBLIC_R2_PUBLIC_URL: ${NEXT_PUBLIC_R2_PUBLIC_URL}
+    restart: always
+    env_file: [.env.production]
+    ports: ["3000:3000"]
+    deploy:
+      resources:
+        limits: { cpus: "1.0", memory: 1G }

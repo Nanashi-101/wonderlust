@@ -3,6 +3,13 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { getCurrentAdmin, requireSuperAdmin } from "@/lib/auth/admin";
+import { after } from "next/server";
+import { sendAdminInviteEmail, sendAdminReplyEmail } from "@/lib/email/admin";
+import { sendBookingCancelledEmail } from "@/lib/email/bookings";
+import { fromMinor } from "@/lib/payments/money";
+import { stripeAdapter } from "@/lib/payments/stripe";
+import { razorpayAdapter } from "@/lib/payments/razorpay";
+import { fullNameOf } from "@/lib/user-display";
 import type { InquiryStatus, AdminRole } from "@prisma/client";
 
 const NOT_AUTHORIZED = "Not authorized. Admin access required.";
@@ -50,10 +57,13 @@ export async function getAdminDashboardStats() {
 
   // Compute total sales revenue from confirmed/completed bookings or package prices
   const revenueAggregate = await prisma.booking.aggregate({
-    _sum: { totalPrice: true },
+    _sum: { totalPriceMinor: true },
   });
 
-  const totalRevenue = revenueAggregate._sum.totalPrice || 1485000; // fallback preview total
+  // AdminOverviewPanel's formatCurrency expects rupees, not minor units — convert here.
+  const totalRevenue = revenueAggregate._sum.totalPriceMinor
+    ? fromMinor(revenueAggregate._sum.totalPriceMinor, "INR")
+    : 1485000; // fallback preview total (rupees)
 
   return {
     totalPackages,
@@ -143,7 +153,8 @@ export async function updateInquiryStatusAction(id: string, status: InquiryStatu
 export async function replyToInquiryAction(
   id: string,
   reply: string,
-  status: InquiryStatus = "IN_PROGRESS"
+  status: InquiryStatus = "IN_PROGRESS",
+  options?: { subject?: string; sendEmail?: boolean }
 ) {
   if (!(await getCurrentAdmin())) return { success: false, error: NOT_AUTHORIZED };
 
@@ -162,6 +173,26 @@ export async function replyToInquiryAction(
     } catch {
       // Ignore
     }
+
+    // Email the customer unless the Email Studio's toggle was switched off.
+    // Scheduled with after() and guarded: the reply is already saved, so a
+    // mail failure must not report the save itself as failed.
+    if (options?.sendEmail !== false) {
+      try {
+        after(async () => {
+          await sendAdminReplyEmail({
+            to: updated.email,
+            name: updated.name,
+            reply: reply.trim(),
+            destination: updated.destination,
+            subject: options?.subject,
+          });
+        });
+      } catch (error) {
+        console.error("[email] could not schedule reply email:", error);
+      }
+    }
+
     return { success: true, inquiry: parseInquiryRecord(updated) };
   } catch (error: any) {
     console.error("Failed to reply to inquiry:", error);
@@ -218,6 +249,22 @@ export async function grantAdminRoleAction(email: string, role: AdminRole = "ADM
     });
 
     revalidatePath("/[locale]/admin", "page");
+
+    // Tell the new admin they have access. Fires on re-grants too, which
+    // doubles as a role-change notice.
+    try {
+      after(async () => {
+        await sendAdminInviteEmail({
+          to: created.email,
+          role: created.role,
+          name: created.name,
+          grantedBy: created.grantedBy,
+        });
+      });
+    } catch (error) {
+      console.error("[email] could not schedule admin invite email:", error);
+    }
+
     return { success: true, admin: created };
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to grant admin privileges." };
@@ -237,4 +284,148 @@ export async function removeAdminRoleAction(id: string) {
   } catch (error: any) {
     return { success: false, error: error?.message || "Failed to remove admin access." };
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Bookings
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ADMIN_CANCELLABLE_STATUSES = ["PENDING", "AWAITING_PAYMENT", "CONFIRMED"] as const;
+
+/**
+ * Admin override — cancels a booking regardless of the 48h customer-facing
+ * policy window in cancelBookingAction. Does not touch payment/refund state;
+ * use refundBookingAction first for a paid booking.
+ */
+export async function adminCancelBookingAction(bookingId: string) {
+  if (!(await getCurrentAdmin())) return { success: false, error: NOT_AUTHORIZED };
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: { user: true, package: true },
+  });
+  if (!booking) return { success: false, error: "Booking not found." };
+  if (!ADMIN_CANCELLABLE_STATUSES.includes(booking.status as (typeof ADMIN_CANCELLABLE_STATUSES)[number])) {
+    return { success: false, error: `A ${booking.status.toLowerCase()} booking can't be cancelled.` };
+  }
+
+  await prisma.booking.update({
+    where: { id: bookingId },
+    data: { status: "CANCELLED", cancelledAt: new Date() },
+  });
+
+  after(async () => {
+    await sendBookingCancelledEmail({
+      bookingId: booking.id,
+      customerName: fullNameOf(booking.user),
+      customerEmail: booking.user.email,
+      packageTitle: booking.package.title,
+      refunded: booking.status === "CONFIRMED",
+    });
+  });
+
+  revalidatePath("/[locale]/admin", "page");
+  return { success: true };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI-generated itineraries (A2) — draft until an admin approves them
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** All AI-generated itinerary drafts, most recent first. */
+export async function getGeneratedItinerariesAction() {
+  if (!(await getCurrentAdmin())) throw new Error(NOT_AUTHORIZED);
+  return prisma.generatedItinerary.findMany({
+    include: { user: true },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+/** Approves a draft itinerary so it can (eventually) be booked. Never auto-approved. */
+export async function approveItineraryAction(id: string) {
+  if (!(await getCurrentAdmin())) return { success: false, error: NOT_AUTHORIZED };
+  await prisma.generatedItinerary.update({ where: { id }, data: { approved: true } });
+  revalidatePath("/[locale]/admin", "page");
+  return { success: true };
+}
+
+/** Every booking, most recent first — for the admin bookings table. */
+export async function getAllBookingsAction() {
+  if (!(await getCurrentAdmin())) throw new Error(NOT_AUTHORIZED);
+
+  return prisma.booking.findMany({
+    include: { package: true, user: true },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+/**
+ * Refunds a booking's most recent successful payment via its original
+ * provider (Stripe or Razorpay), for the full remaining (un-refunded) amount.
+ * Requires that provider's live credentials — without them this returns a
+ * clear "not configured" error rather than silently doing nothing.
+ */
+export async function refundBookingAction(bookingId: string, reason?: string) {
+  if (!(await getCurrentAdmin())) return { success: false, error: NOT_AUTHORIZED };
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: {
+      user: true,
+      package: true,
+      payments: { where: { status: "SUCCEEDED" }, orderBy: { createdAt: "desc" }, take: 1 },
+    },
+  });
+  if (!booking) return { success: false, error: "Booking not found." };
+
+  const payment = booking.payments[0];
+  if (!payment || !payment.providerPaymentId) {
+    return { success: false, error: "No successful payment found for this booking." };
+  }
+
+  const remainingMinor = payment.amountMinor - payment.refundedMinor;
+  if (remainingMinor <= 0) {
+    return { success: false, error: "This payment is already fully refunded." };
+  }
+
+  const adapter = payment.provider === "RAZORPAY" ? razorpayAdapter : stripeAdapter;
+
+  let refundResult;
+  try {
+    refundResult = await adapter.refund({
+      providerPaymentId: payment.providerPaymentId,
+      amountMinor: remainingMinor,
+      reason,
+    });
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Refund failed." };
+  }
+
+  const totalRefunded = payment.refundedMinor + refundResult.refundedMinor;
+  const fullyRefunded = totalRefunded >= payment.amountMinor;
+
+  await prisma.payment.update({
+    where: { id: payment.id },
+    data: {
+      refundedMinor: totalRefunded,
+      status: fullyRefunded ? "REFUNDED" : "PARTIALLY_REFUNDED",
+    },
+  });
+
+  if (fullyRefunded) {
+    await prisma.booking.update({ where: { id: booking.id }, data: { status: "REFUNDED" } });
+
+    after(async () => {
+      await sendBookingCancelledEmail({
+        bookingId: booking.id,
+        customerName: fullNameOf(booking.user),
+        customerEmail: booking.user.email,
+        packageTitle: booking.package.title,
+        refunded: true,
+      });
+    });
+  }
+
+  revalidatePath("/[locale]/admin", "page");
+  return { success: true, fullyRefunded };
 }
