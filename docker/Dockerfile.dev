@@ -1,0 +1,14 @@
+FROM node:22-alpine
+RUN apk add --no-cache libc6-compat openssl
+WORKDIR /app
+COPY package.json package-lock.json ./
+# npm install, not ci: some platform-optional native deps (lightningcss, esbuild)
+# resolve a different transitive chain on Linux than the Windows-generated
+# lockfile encodes, which trips npm ci's stricter lockfile-completeness check
+# even with matching npm versions — confirmed by testing both. npm install
+# resolves and self-heals instead of hard-failing on that gap.
+RUN npm install
+COPY prisma ./prisma
+RUN npx prisma generate
+EXPOSE 3000
+CMD ["npm", "run", "dev"]

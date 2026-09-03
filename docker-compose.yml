@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wonderlust
+      POSTGRES_PASSWORD: wonderlust
+      POSTGRES_DB: wonderlust
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wonderlust"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Not wired to anything yet — reserved for S5 (Upstash-compatible rate limiting)
+  # and later AI-chat session state. Safe to leave running unused until then.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    restart: unless-stopped
+    # Real secrets (Kinde, R2, Resend) come from your own .env — this project uses
+    # plain .env everywhere (see prisma.config.ts), not .env.local. DATABASE_URL/
+    # DIRECT_URL below intentionally override it to point at the local `db` service
+    # instead of Supabase, for local dev parity.
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql://wonderlust:wonderlust@db:5432/wonderlust
+      DIRECT_URL: postgresql://wonderlust:wonderlust@db:5432/wonderlust
+      REDIS_URL: redis://redis:6379
+    ports: ["3000:3000"]
+    volumes:
+      - .:/app
+      - /app/node_modules      # keep container's node_modules
+      - /app/.next
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Forwards Stripe webhooks to the local app once M5 lands.
+  # `docker compose --profile tools up stripe-cli`
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    profiles: [tools]
+    env_file: [.env]
+    command: listen --forward-to web:3000/api/webhooks/stripe
+    depends_on: [web]
+
+volumes:
+  pgdata:
