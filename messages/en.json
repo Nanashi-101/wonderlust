@@ -118,5 +118,41 @@
     "filterManali": "Manali",
     "filterRishikesh": "Rishikesh",
     "filterLadakh": "Ladakh"
+  },
+  "NotFound": {
+    "eyebrow": "404",
+    "heading": "You've wandered off the trail",
+    "description": "This path doesn't lead anywhere — the page may have moved, or the URL took a wrong turn somewhere in the mountains.",
+    "cta": "Back to base camp"
+  },
+  "Bookings": {
+    "title": "My Bookings",
+    "emptyTitle": "No bookings yet",
+    "emptyDescription": "You don't have any active bookings yet. Start exploring our expeditions to begin your journey!",
+    "exploreCta": "Explore Packages",
+    "guests": "Travellers",
+    "total": "Total",
+    "departure": "Departure",
+    "departureUnset": "Flexible",
+    "cancel": "Cancel booking",
+    "cancelling": "Cancelling…",
+    "cancelConfirm": "Cancel this booking?",
+    "statusPending": "Pending",
+    "statusAwaitingPayment": "Awaiting payment",
+    "statusConfirmed": "Confirmed",
+    "statusCancelled": "Cancelled",
+    "statusCompleted": "Completed",
+    "statusRefunded": "Refunded",
+    "payNow": "Pay now",
+    "payNowPending": "Starting checkout…"
+  },
+  "Review": {
+    "leaveReview": "Leave a review",
+    "alreadyReviewed": "Reviewed",
+    "rating": "Rating",
+    "comment": "Comment (optional)",
+    "submit": "Submit review",
+    "submitting": "Submitting…",
+    "thankYou": "Thanks for your review!"
   }
 }
