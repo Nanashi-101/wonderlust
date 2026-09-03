@@ -11,6 +11,9 @@ const siteUrl =
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
 const nextConfig: NextConfig = {
+  // Self-contained server bundle for the Docker production image (docker/Dockerfile).
+  // Vercel ignores this and uses its own build output, so it's safe to keep for both targets.
+  output: "standalone",
   env: {
     KINDE_SITE_URL: siteUrl,
     KINDE_POST_LOGOUT_REDIRECT_URL:
