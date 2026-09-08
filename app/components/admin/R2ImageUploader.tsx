@@ -154,7 +154,7 @@ export default function R2ImageUploader({
         <div className="relative flex items-center">
           <input
             type="text"
-            placeholder="/destination/Ladakh.png or https://..."
+            placeholder="https://pub-xxxx.r2.dev/destination/example.png"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="w-full px-4 py-3 rounded-xl bg-white border border-neutral-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 outline-none text-xs font-mono text-cyan-700 transition-all pr-24"

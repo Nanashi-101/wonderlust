@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import MountainBg from "@/public/destination/pause-bg.png"; // use subtle image
+import { staticImage } from "@/lib/static-images";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -36,7 +36,7 @@ export default function ExperiencePause() {
         <div className="relative h-112.5 md:h-125 overflow-hidden rounded-3xl shadow-2xl bg-black/90 text-white flex flex-col md:flex-row items-center">
           <div className="absolute inset-0">
             <Image
-              src={MountainBg}
+              src={staticImage("destination/pause-bg.png")}
               alt="Mountains"
               quality={100}
               fill

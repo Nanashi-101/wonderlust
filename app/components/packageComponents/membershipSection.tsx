@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import MembershipImage from "@/public/member-pic.png"
+import { staticImage } from "@/lib/static-images";
 
 import { useTranslations } from "next-intl";
 
@@ -72,7 +72,7 @@ export default function MembershipSection() {
           {/* Right Decorative Block */}
           <div className="relative h-64 md:h-full rounded-2xl overflow-hidden">
             <Image
-              src={MembershipImage}
+              src={staticImage("member-pic.png")}
               alt="Membership Experience"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"

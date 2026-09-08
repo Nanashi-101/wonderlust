@@ -1,17 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { motion, useAnimationFrame } from "framer-motion";
 import { useRef, useState } from "react";
 import Image from "next/image";
-import MakeMyTrip from "@/public/partners/makemytrip.png";
-import AirBnb from "@/public/partners/airbnb.png";
-import Booking from "@/public/partners/booking.webp";
-import India from "@/public/partners/Incredibleindia.png";
-import Stripe from "@/public/partners/stripe.png";
-import TripAdvisor from "@/public/partners/tripadvisor.png";
+import { staticImage } from "@/lib/static-images";
 
-const partners = [MakeMyTrip, AirBnb, Booking, India, Stripe, TripAdvisor];
+const partners = [
+  staticImage("partners/makemytrip.png"),
+  staticImage("partners/airbnb.png"),
+  staticImage("partners/booking.webp"),
+  staticImage("partners/Incredibleindia.png"),
+  staticImage("partners/stripe.png"),
+  staticImage("partners/tripadvisor.png"),
+];
 
 export default function Partners() {
   const containerRef = useRef<HTMLDivElement>(null);

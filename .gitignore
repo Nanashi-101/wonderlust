@@ -45,6 +45,15 @@ next-env.d.ts
 
 /lib/generated/prisma
 
+# Static media lives in Cloudflare R2 (see lib/static-images.ts), not /public —
+# keeps the repo small and lets Cloudflare's CDN serve it instead of Vercel/git.
+/public/**/*.png
+/public/**/*.jpg
+/public/**/*.jpeg
+/public/**/*.webp
+/public/**/*.gif
+/public/**/*.avif
+
 # AI agent instructions/skills (local-only, not for GitHub)
 CLAUDE.md
 AGENTS.md

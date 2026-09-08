@@ -1,7 +1,7 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
-import BgPicture from "@/public/bgpiclogo.png";
+import { staticImage } from "@/lib/static-images";
 import AdminHeader from "@/app/components/admin/AdminHeader";
 import AdminFooter from "@/app/components/admin/AdminFooter";
 import CreatorStudioWizard from "@/app/components/admin/CreatorStudioWizard";
@@ -35,7 +35,7 @@ export default async function AdminCreatePackagePage({
 
         {/* Hero Background Image */}
         <Image
-          src={BgPicture}
+          src={staticImage("bgpiclogo.png")}
           alt="Hero Background"
           fill
           priority

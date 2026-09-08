@@ -1,6 +1,6 @@
 "use client";
 
-import BgPicture from "@/public/bgpiclogo.png";
+import { staticImage } from "@/lib/static-images";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -41,7 +41,7 @@ export default function Hero() {
       {/* Background Image */}
       <div ref={bgRef} className="absolute inset-0 -z-10">
         <Image
-          src={BgPicture}
+          src={staticImage("bgpiclogo.png")}
           alt="Mountains"
           fill
           priority
