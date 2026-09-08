@@ -44,3 +44,13 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# AI agent instructions/skills (local-only, not for GitHub)
+CLAUDE.md
+AGENTS.md
+.agents/
+.claude/
+skills-lock.json
+.cursorrules
+.clinerules
+.windsurfrules
