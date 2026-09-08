@@ -29,9 +29,9 @@ export type LocalisedPackage = ReturnType<typeof localisePackage>;
  * Resolves an image path to either its full Cloudflare R2 public URL or relative path.
  */
 export function getImageUrl(path: string | null | undefined): string {
-  if (!path) return "/destination/Ladakh.png";
-  if (path.startsWith("http://") || path.startsWith("https://")) {
-    return path;
+  const resolvedPath = path || "/destination/Ladakh.png";
+  if (resolvedPath.startsWith("http://") || resolvedPath.startsWith("https://")) {
+    return resolvedPath;
   }
 
   const r2Domain =
@@ -40,11 +40,11 @@ export function getImageUrl(path: string | null | undefined): string {
 
   if (r2Domain) {
     const domain = r2Domain.endsWith("/") ? r2Domain.slice(0, -1) : r2Domain;
-    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    const cleanPath = resolvedPath.startsWith("/") ? resolvedPath : `/${resolvedPath}`;
     return `${domain}${cleanPath}`;
   }
 
-  return path;
+  return resolvedPath;
 }
 
 // Locale-aware content helper — falls back to English if no translation exists

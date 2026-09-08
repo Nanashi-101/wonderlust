@@ -1,18 +1,12 @@
-// Local destination image imports.
-// Used anywhere a static next/image import is needed (gives built-in width/height).
-// Note: package components now use string paths from the DB via next/image with fill.
-import Ladakh from "@/public/destination/Ladakh.png";
-import Kashmir from "@/public/destination/kashmir.png";
-import Manali from "@/public/destination/manali.png";
-import Rishikesh from "@/public/destination/rishikesh.png";
-import Puri from "@/public/destination/puri.png";
+// Destination images served from Cloudflare R2 (see lib/static-images.ts).
+import { staticImage } from "@/lib/static-images";
 
 export const DestinationImages = {
-  Ladakh,
-  Kashmir,
-  Manali,
-  Rishikesh,
-  Puri,
+  Ladakh: staticImage("destination/Ladakh.png"),
+  Kashmir: staticImage("destination/kashmir.png"),
+  Manali: staticImage("destination/manali.png"),
+  Rishikesh: staticImage("destination/rishikesh.png"),
+  Puri: staticImage("destination/puri.png"),
 };
 
 export const Images = DestinationImages;

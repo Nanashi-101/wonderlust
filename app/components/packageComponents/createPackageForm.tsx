@@ -24,13 +24,14 @@ import {
 import { Link } from "@/i18n/navigation";
 import R2ImageUploader from "../admin/R2ImageUploader";
 import CustomSelect, { type SelectOption } from "../admin/CustomSelect";
+import { staticImage } from "@/lib/static-images";
 
 const PRESET_IMAGES = [
-  { name: "Ladakh", path: "/destination/Ladakh.png" },
-  { name: "Kashmir", path: "/destination/kashmir.png" },
-  { name: "Manali", path: "/destination/manali.png" },
-  { name: "Rishikesh", path: "/destination/rishikesh.png" },
-  { name: "Puri", path: "/destination/puri.png" },
+  { name: "Ladakh", path: staticImage("destination/Ladakh.png") },
+  { name: "Kashmir", path: staticImage("destination/kashmir.png") },
+  { name: "Manali", path: staticImage("destination/manali.png") },
+  { name: "Rishikesh", path: staticImage("destination/rishikesh.png") },
+  { name: "Puri", path: staticImage("destination/puri.png") },
 ];
 
 const CATEGORY_OPTIONS: SelectOption[] = [
@@ -73,7 +74,7 @@ export default function CreatePackageForm() {
   const [durationNights, setDurationNights] = useState<number>(4);
   const [priceFrom, setPriceFrom] = useState<number>(19999);
   const [maxAltitudeFt, setMaxAltitudeFt] = useState<string>("12000");
-  const [imagePath, setImagePath] = useState("/destination/Ladakh.png");
+  const [imagePath, setImagePath] = useState(staticImage("destination/Ladakh.png"));
   const [description, setDescription] = useState("");
   const [highlights, setHighlights] = useState<string[]>([
     "Guided mountain trekking",

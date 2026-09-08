@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import R2ImageUploader from "./R2ImageUploader";
 import CustomSelect, { type SelectOption } from "./CustomSelect";
+import { staticImage } from "@/lib/static-images";
+import { getImageUrl } from "@/lib/package-utils";
 import {
   Sparkles,
   Plus,
@@ -32,11 +34,11 @@ import {
 } from "lucide-react";
 
 const PRESET_IMAGES = [
-  { name: "Ladakh", path: "/destination/Ladakh.png" },
-  { name: "Kashmir", path: "/destination/kashmir.png" },
-  { name: "Manali", path: "/destination/manali.png" },
-  { name: "Rishikesh", path: "/destination/rishikesh.png" },
-  { name: "Puri", path: "/destination/puri.png" },
+  { name: "Ladakh", path: staticImage("destination/Ladakh.png") },
+  { name: "Kashmir", path: staticImage("destination/kashmir.png") },
+  { name: "Manali", path: staticImage("destination/manali.png") },
+  { name: "Rishikesh", path: staticImage("destination/rishikesh.png") },
+  { name: "Puri", path: staticImage("destination/puri.png") },
 ];
 
 const CATEGORY_OPTIONS: SelectOption[] = [
@@ -102,7 +104,7 @@ export default function CreatorStudioWizard({
     initialData?.maxAltitudeFt ? String(initialData.maxAltitudeFt) : "14500"
   );
   const [imagePath, setImagePath] = useState(
-    initialData?.imagePath || "/destination/Ladakh.png"
+    initialData?.imagePath || staticImage("destination/Ladakh.png")
   );
   const [description, setDescription] = useState(
     initialData?.description ||
@@ -842,7 +844,7 @@ export default function CreatorStudioWizard({
                   className="relative w-full h-full"
                 >
                   <Image
-                    src={imagePath || "/destination/Ladakh.png"}
+                    src={getImageUrl(imagePath)}
                     alt={title || "Package Preview"}
                     fill
                     className="object-cover"

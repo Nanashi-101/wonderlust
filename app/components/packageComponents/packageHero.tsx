@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import heroBG from "@/public/package-bg.png"
+import { staticImage } from "@/lib/static-images";
 
 import { useTranslations } from "next-intl";
 
@@ -32,7 +32,7 @@ export default function PackageHero() {
     >
       {/* Background Image */}
       <Image
-        src={heroBG} // Replace with your actual image
+        src={staticImage("package-bg.png")}
         alt="Himalayan Expeditions"
         fill
         priority
