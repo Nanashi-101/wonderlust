@@ -8,6 +8,8 @@ import { clientEnv } from "@/lib/env";
  * public NEXT_PUBLIC_R2_PUBLIC_URL var.
  */
 export function staticImage(key: string): string {
+  // Full URLs (e.g. the planner's Unsplash photos) pass straight through.
+  if (/^https?:\/\//i.test(key)) return key;
   const base = (clientEnv.NEXT_PUBLIC_R2_PUBLIC_URL ?? "").replace(/\/+$/, "");
   const cleanKey = key.replace(/^\/+/, "");
   return `${base}/${cleanKey}`;

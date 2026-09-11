@@ -31,13 +31,15 @@ export default function ScrollToTop() {
     <button
       onClick={scrollToTop}
       className={`
-        fixed bottom-8 right-8 z-50
+        fixed bottom-26 right-9 z-50
         w-12 h-12 rounded-full
         bg-cyan-500 text-white
         shadow-lg
         flex items-center justify-center
         transition-all duration-300 cursor-pointer
         ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6 pointer-events-none"}
+        [html[data-chat-open]_&]:opacity-0 [html[data-chat-open]_&]:pointer-events-none
+        [html[data-chat-teaser]_&]:opacity-0 [html[data-chat-teaser]_&]:pointer-events-none
       `}
     >
       <ArrowUp size={18} />

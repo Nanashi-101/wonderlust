@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import type { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
-import { User, LogOut, Package, CalendarDays, Settings, ChevronDown, Menu, X, PlusCircle } from "lucide-react";
+import { User, LogOut, Package, CalendarDays, Settings, ChevronDown, Menu, X, PlusCircle, Sparkles } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -114,6 +114,12 @@ export default function NavbarClient({ user, isAuth, isAdmin = false }: NavbarCl
                       <Link href="/bookings" className="flex items-center w-full">
                         <CalendarDays className="w-4 h-4 mr-3" />
                         <span className="font-medium">{t('myBookings')}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild className="cursor-pointer rounded-lg py-2.5 focus:bg-cyan-50 focus:text-cyan-600">
+                      <Link href="/plan" className="flex items-center w-full">
+                        <Sparkles className="w-4 h-4 mr-3" />
+                        <span className="font-medium">{t('planTrip')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer rounded-lg py-2.5 focus:bg-cyan-50 focus:text-cyan-600">
@@ -229,6 +235,10 @@ export default function NavbarClient({ user, isAuth, isAdmin = false }: NavbarCl
                     <Link href="/bookings" className="p-4 rounded-2xl bg-white/5 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
                       <CalendarDays className="w-6 h-6 text-cyan-400" />
                       <span className="text-white text-xs">{t('myBookings')}</span>
+                    </Link>
+                    <Link href="/plan" className="col-span-2 p-4 rounded-2xl bg-white/5 flex items-center justify-center gap-2 hover:bg-white/10 transition-colors">
+                      <Sparkles className="w-5 h-5 text-cyan-400" />
+                      <span className="text-white text-sm">{t('planTrip')}</span>
                     </Link>
                   </div>
                   <LogoutLink className="block w-full p-4 rounded-2xl bg-red-500/20 text-red-500 text-center font-bold">

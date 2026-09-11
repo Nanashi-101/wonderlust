@@ -3,9 +3,10 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import { env } from "@/lib/env";
 import { requireUser } from "@/lib/auth/user";
-import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
+import { guardAiRequest } from "@/lib/ai/limits";
 import { getPackageCatalogContext } from "@/lib/ai/catalog";
 import { prisma } from "@/lib/db";
+import { ItineraryOutputSchema } from "@/lib/ai/itinerary";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -13,27 +14,13 @@ export const maxDuration = 60;
 const PreferencesSchema = z.object({
   destination: z.string().max(200).optional(),
   budgetINR: z.number().positive().optional(),
-  durationDays: z.number().int().positive().optional(),
-  groupSize: z.number().int().positive().optional(),
-  interests: z.array(z.string()).optional(),
+  budgetTier: z.enum(["budget", "comfort", "premium", "luxury"]).optional(),
+  durationDays: z.number().int().positive().max(60).optional(),
+  groupSize: z.number().int().positive().max(50).optional(),
+  groupType: z.enum(["solo", "couple", "family", "friends"]).optional(),
+  travelMonth: z.string().max(20).optional(),
+  interests: z.array(z.string().max(40)).max(12).optional(),
   notes: z.string().max(1000).optional(),
-});
-
-const ItineraryOutputSchema = z.object({
-  title: z.string(),
-  summary: z.string(),
-  days: z
-    .array(
-      z.object({
-        day: z.number().int().min(1),
-        title: z.string(),
-        detail: z.string(),
-      })
-    )
-    .min(1),
-  // Must reference real catalog package slugs — cross-checked against the DB below.
-  // The model choosing these is a *recommendation*; it never sets the price.
-  recommendedPackageSlugs: z.array(z.string()).min(1).max(3),
 });
 
 export async function POST(req: Request) {
@@ -43,13 +30,6 @@ export async function POST(req: Request) {
   } catch {
     return Response.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   }
-
-  const rateLimit = await checkRateLimit(`itinerary:${user.id}`, {
-    key: "itinerary",
-    limit: 5,
-    windowSec: 3600,
-  });
-  if (!rateLimit.success) return rateLimitResponse(rateLimit);
 
   if (!env.ANTHROPIC_API_KEY) {
     return Response.json(
@@ -67,6 +47,9 @@ export async function POST(req: Request) {
   }
   const preferences = parsedInput.data;
 
+  const refused = await guardAiRequest("itinerary", user.id);
+  if (refused) return refused;
+
   const catalog = await getPackageCatalogContext();
 
   let generated;
@@ -75,13 +58,15 @@ export async function POST(req: Request) {
       model: anthropic("claude-sonnet-5"),
       schema: ItineraryOutputSchema,
       system: [
-        "You design custom multi-day travel itineraries for Wonderlust Expeditions,",
-        "built strictly from this real package catalog — never invent a package, price,",
-        "or slug that isn't listed:",
+        "You design custom multi-day travel itineraries anywhere in India for Wonderlust Expeditions.",
+        "Plan realistic days: sensible travel times between places, the season, and the traveller's group, pace and budget.",
+        "If no destination is given, choose one in India that fits the other preferences.",
         "",
+        "These are our bookable packages:",
         catalog,
         "",
-        "recommendedPackageSlugs must contain only slugs that appear above.",
+        "recommendedPackageSlugs: include up to 3 slugs from the list above only when a package genuinely fits this trip, otherwise return an empty array.",
+        "Never invent a package, slug or price, and don't quote prices anywhere in the itinerary.",
       ].join("\n"),
       prompt: `Design an itinerary for a traveller with these preferences: ${JSON.stringify(preferences)}`,
     });
@@ -91,30 +76,32 @@ export async function POST(req: Request) {
     return Response.json({ error: "GENERATION_FAILED" }, { status: 502 });
   }
 
-  // Schema conformance doesn't guarantee the slugs are real — verify against
-  // the DB before this is ever persisted or priced. A hallucinated slug here
-  // fails the request rather than silently pricing a fictional package.
-  const packages = await prisma.package.findMany({
-    where: { slug: { in: generated.recommendedPackageSlugs }, active: true },
-  });
-  const foundSlugs = new Set(packages.map((p) => p.slug));
-  const invalidSlugs = generated.recommendedPackageSlugs.filter((slug) => !foundSlugs.has(slug));
-
-  if (invalidSlugs.length > 0 || packages.length === 0) {
-    console.error("[itinerary] model referenced unknown package slug(s):", invalidSlugs);
-    return Response.json({ error: "INVALID_GENERATED_OUTPUT" }, { status: 422 });
+  // The model's slugs are only a recommendation: keep just the ones that are real,
+  // active packages. A hallucinated slug is dropped rather than priced.
+  const suggested = generated.recommendedPackageSlugs;
+  const packages =
+    suggested.length > 0
+      ? await prisma.package.findMany({ where: { slug: { in: suggested }, active: true } })
+      : [];
+  const realSlugs = new Set(packages.map((p) => p.slug));
+  const dropped = suggested.filter((slug) => !realSlugs.has(slug));
+  if (dropped.length > 0) {
+    console.warn("[itinerary] dropped unknown package slug(s):", dropped);
   }
+  const itinerary = { ...generated, recommendedPackageSlugs: suggested.filter((slug) => realSlugs.has(slug)) };
 
-  // Server-computed from real package rows — never the model's own number.
-  const currency = packages[0].currency;
-  const totalPriceMinor = packages.reduce((sum, pkg) => sum + pkg.priceFromMinor, 0);
+  // Server-computed from real package rows — never the model's own number. No
+  // matching package means a custom trip, unpriced until the team quotes it.
+  const currency = packages[0]?.currency ?? "INR";
+  const totalPriceMinor =
+    packages.length > 0 ? packages.reduce((sum, pkg) => sum + pkg.priceFromMinor, 0) : null;
 
   const draft = await prisma.generatedItinerary.create({
     data: {
       userId: user.id,
-      title: generated.title,
+      title: itinerary.title,
       preferences: preferences,
-      itinerary: generated,
+      itinerary,
       totalPriceMinor,
       currency,
       approved: false, // never bookable until an admin approves it — see A2
@@ -124,7 +111,7 @@ export async function POST(req: Request) {
   return Response.json({
     id: draft.id,
     approved: false,
-    itinerary: generated,
+    itinerary,
     totalPriceMinor,
     currency,
   });

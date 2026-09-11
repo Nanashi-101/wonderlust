@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, ObjectCannedACL } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const accountId = process.env.CLOUDFLARE_R2_ACCOUNT_ID;
@@ -63,6 +63,20 @@ export async function uploadToR2(
     key,
     url: getPublicR2Url(key),
   };
+}
+
+/**
+ * Deletes an object from Cloudflare R2 by key.
+ */
+export async function deleteFromR2(key: string): Promise<void> {
+  const s3 = getR2Client();
+
+  await s3.send(
+    new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+    })
+  );
 }
 
 /**

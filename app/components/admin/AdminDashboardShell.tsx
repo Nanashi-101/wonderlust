@@ -12,6 +12,7 @@ import {
   Inbox,
   ShieldCheck,
   CalendarCheck,
+  Megaphone,
   Plus,
   ArrowUpRight,
   Sparkles,
@@ -32,6 +33,8 @@ import AdminPackagesPanel from "./AdminPackagesPanel";
 import AdminEnquiriesPanel from "./AdminEnquiriesPanel";
 import AdminUsersPanel from "./AdminUsersPanel";
 import AdminBookingsPanel from "./AdminBookingsPanel";
+import AdminAdvertisementsPanel from "./AdminAdvertisementsPanel";
+import AdminItinerariesPanel, { type ItineraryRow } from "./AdminItinerariesPanel";
 import CreatorStudioWizard from "./CreatorStudioWizard";
 import AdminSearchModal from "./AdminSearchModal";
 import AdminNotifications from "./AdminNotifications";
@@ -48,9 +51,16 @@ import {
   removeAdminRoleAction,
   refundBookingAction,
   adminCancelBookingAction,
+  approveItineraryAction,
 } from "@/lib/actions/admin";
+import {
+  createAdvertisementAction,
+  deleteAdvertisementAction,
+  toggleAdvertisementActiveAction,
+  moveAdvertisementAction,
+} from "@/lib/actions/advertisements";
 
-export type AdminTab = "overview" | "packages" | "bookings" | "enquiries" | "admins";
+export type AdminTab = "overview" | "packages" | "bookings" | "enquiries" | "itineraries" | "admins" | "advertisements";
 
 
 const NAV_ITEMS: Array<{
@@ -85,6 +95,18 @@ const NAV_ITEMS: Array<{
     icon: Inbox,
   },
   {
+    id: "itineraries",
+    label: "AI Itineraries",
+    sublabel: "Review generated trips",
+    icon: Sparkles,
+  },
+  {
+    id: "advertisements",
+    label: "Advertisements",
+    sublabel: "Homepage scroll gallery",
+    icon: Megaphone,
+  },
+  {
     id: "admins",
     label: "Admin Team",
     sublabel: "Roles & permissions",
@@ -98,6 +120,8 @@ interface AdminDashboardShellProps {
   initialInquiries: any[];
   initialAdmins: any[];
   initialBookings: BookingRow[];
+  initialAdvertisements: any[];
+  initialItineraries: ItineraryRow[];
   user: { name: string; email: string; picture: string | null; role: string } | null;
 }
 
@@ -107,6 +131,8 @@ export default function AdminDashboardShell({
   initialInquiries,
   initialAdmins,
   initialBookings,
+  initialAdvertisements,
+  initialItineraries,
   user,
 }: AdminDashboardShellProps) {
   const isSuperAdmin = user?.role === "SUPER_ADMIN";
@@ -117,6 +143,8 @@ export default function AdminDashboardShell({
   const [inquiries, setInquiries] = useState<any[]>(initialInquiries);
   const [admins, setAdmins] = useState<any[]>(initialAdmins);
   const [bookings, setBookings] = useState<BookingRow[]>(initialBookings);
+  const [advertisements, setAdvertisements] = useState<any[]>(initialAdvertisements);
+  const [itineraries, setItineraries] = useState<ItineraryRow[]>(initialItineraries);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
@@ -126,19 +154,21 @@ export default function AdminDashboardShell({
 
   // Global Ctrl+K shortcut for search
   const isSearchDisabled = activeTab === "overview";
+  // AI itineraries have their own status filter — the search modal doesn't index them.
+  const isSearchable = activeTab !== "overview" && activeTab !== "itineraries";
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        if (activeTab !== "overview") {
+        if (isSearchable) {
           setIsSearchModalOpen((prev) => !prev);
         }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeTab]);
+  }, [isSearchable]);
 
 
   const handleDeletePackage = async (id: string) => {
@@ -210,6 +240,53 @@ export default function AdminDashboardShell({
     return res;
   };
 
+  const handleUploadAdvertisement = async (imageUrl: string, imageKey: string) => {
+    const res = await createAdvertisementAction({ imageUrl, imageKey });
+    if (res.success && res.advertisement) {
+      setAdvertisements((prev) => [...prev, res.advertisement]);
+    }
+  };
+
+  const handleDeleteAdvertisement = async (id: string) => {
+    const res = await deleteAdvertisementAction(id);
+    if (res.success) {
+      setAdvertisements((prev) => prev.filter((a) => a.id !== id));
+    }
+  };
+
+  const handleToggleAdvertisementActive = async (id: string) => {
+    const res = await toggleAdvertisementActiveAction(id);
+    if (res.success) {
+      setAdvertisements((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, active: res.active } : a))
+      );
+    }
+  };
+
+  const handleMoveAdvertisement = async (id: string, direction: "up" | "down") => {
+    const res = await moveAdvertisementAction(id, direction);
+    if (res.success) {
+      setAdvertisements((prev) => {
+        const index = prev.findIndex((a) => a.id === id);
+        const swapIndex = direction === "up" ? index - 1 : index + 1;
+        if (index === -1 || swapIndex < 0 || swapIndex >= prev.length) return prev;
+        const next = [...prev];
+        [next[index], next[swapIndex]] = [next[swapIndex], next[index]];
+        return next;
+      });
+    }
+  };
+
+  const handleApproveItinerary = async (id: string) => {
+    const res = await approveItineraryAction(id);
+    if (res.success) {
+      setItineraries((prev) =>
+        prev.map((it) => (it.id === id ? { ...it, approved: true } : it))
+      );
+    }
+    return res;
+  };
+
   // Render Creator Studio (full-screen takeover)
   if (isCreatingPackage || editingPackage) {
     return (
@@ -232,6 +309,7 @@ export default function AdminDashboardShell({
 
   const activeNavItem = NAV_ITEMS.find((n) => n.id === activeTab);
   const newInquiriesCount = inquiries.filter((i) => i.status === "NEW").length;
+  const pendingItinerariesCount = itineraries.filter((it) => !it.approved).length;
 
   const searchPlaceholderText = () => {
     switch (activeTab) {
@@ -337,10 +415,13 @@ export default function AdminDashboardShell({
           {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
-            const badgeCount =
-              item.id === "enquiries" && newInquiriesCount > 0
-                ? `${newInquiriesCount}`
-                : undefined;
+            const count =
+              item.id === "enquiries"
+                ? newInquiriesCount
+                : item.id === "itineraries"
+                  ? pendingItinerariesCount
+                  : 0;
+            const badgeCount = count > 0 ? `${count}` : undefined;
 
             return (
               <button
@@ -463,7 +544,7 @@ export default function AdminDashboardShell({
 
             <div className="flex items-center gap-3 shrink-0">
               {/* Section-Specific Search Trigger - Only shown on sections where search is applicable */}
-              {activeTab !== "overview" && (
+              {isSearchable && (
                 <div className="hidden md:flex items-center relative">
                   <button
                     onClick={() => setIsSearchModalOpen(true)}
@@ -567,6 +648,41 @@ export default function AdminDashboardShell({
                   onReplyInquiry={handleReplyToInquiry}
                 />
 
+              </motion.div>
+            )}
+
+            {activeTab === "advertisements" && (
+              <motion.div
+                key="advertisements"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="w-full max-w-full min-w-0"
+              >
+                <AdminAdvertisementsPanel
+                  advertisements={advertisements}
+                  onUpload={handleUploadAdvertisement}
+                  onDelete={handleDeleteAdvertisement}
+                  onToggleActive={handleToggleAdvertisementActive}
+                  onMove={handleMoveAdvertisement}
+                />
+              </motion.div>
+            )}
+
+            {activeTab === "itineraries" && (
+              <motion.div
+                key="itineraries"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="w-full max-w-full min-w-0"
+              >
+                <AdminItinerariesPanel
+                  itineraries={itineraries}
+                  onApprove={handleApproveItinerary}
+                />
               </motion.div>
             )}
 

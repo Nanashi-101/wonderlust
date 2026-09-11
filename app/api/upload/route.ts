@@ -33,6 +33,13 @@ export async function POST(req: Request) {
       );
     }
 
+    // Allowlisted destination folders only — never let the client dictate an arbitrary key prefix.
+    const ALLOWED_FOLDERS = ["destination", "advertisements"] as const;
+    const requestedFolder = formData.get("folder");
+    const folder = ALLOWED_FOLDERS.includes(requestedFolder as (typeof ALLOWED_FOLDERS)[number])
+      ? (requestedFolder as (typeof ALLOWED_FOLDERS)[number])
+      : "destination";
+
     // Validate file type
     if (!file.type.startsWith("image/")) {
       return NextResponse.json(
@@ -52,7 +59,7 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Generate clean filename inside destination/ folder
+    // Generate a clean filename inside the resolved folder
     const fileExt = file.name.split(".").pop() || "png";
     const sanitizedBase = file.name
       .replace(/\.[^/.]+$/, "")
@@ -60,7 +67,7 @@ export async function POST(req: Request) {
       .replace(/[^a-z0-9]/g, "-")
       .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");
-    const key = `destination/${sanitizedBase}-${Date.now()}.${fileExt}`;
+    const key = `${folder}/${sanitizedBase}-${Date.now()}.${fileExt}`;
 
     const result = await uploadToR2(buffer, key, file.type || "image/png");
 

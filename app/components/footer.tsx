@@ -4,7 +4,7 @@ export default function Footer() {
   const t = useTranslations('Footer');
   
   return (
-    <footer className="bg-cyan-500 text-white py-20">
+    <footer id="site-footer" className="bg-cyan-500 text-white py-20">
       <div className="container mx-auto px-8 max-w-6xl">
         <div className="grid md:grid-cols-4 gap-12">
           {/* Brand */}

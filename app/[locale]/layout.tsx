@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "../globals.css";
 import SmoothScroll from "../components/smooth-scroll";
 import ScrollToTop from "../components/scrollToTop";
+import ChatWidget from "../components/ai/ChatWidget";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -55,6 +56,7 @@ export default async function RootLayout({
             <SmoothScroll />
             {children}
             <ScrollToTop />
+            <ChatWidget />
           </NextIntlClientProvider>
         </AuthProvider>
       </body>

@@ -289,3 +289,21 @@ model Review {
   @@index([packageId, published])
 }
 
+// ─────────────────────────────────────────
+// ADVERTISEMENT
+// Client-supplied promotional images (physical ads, digitized), shown
+// as a scroll gallery on the homepage. Picture-only — no title/link.
+// ─────────────────────────────────────────
+
+model Advertisement {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  imageKey  String                                    // R2 object key, e.g. "advertisements/foo-123.png" — needed to delete the object on removal
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+

@@ -6,14 +6,17 @@ import Image from "next/image";
 
 interface R2ImageUploaderProps {
   value: string;
-  onChange: (url: string) => void;
+  onChange: (url: string, key?: string) => void;
   presets?: Array<{ name: string; path: string }>;
+  /** R2 key prefix new uploads go into. Defaults to "destination" (package photos). */
+  folder?: "destination" | "advertisements";
 }
 
 export default function R2ImageUploader({
   value,
   onChange,
   presets = [],
+  folder = "destination",
 }: R2ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +43,7 @@ export default function R2ImageUploader({
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("folder", folder);
 
       const res = await fetch("/api/upload", {
         method: "POST",
@@ -52,8 +56,8 @@ export default function R2ImageUploader({
         throw new Error(data.error || "Failed to upload file to Cloudflare R2.");
       }
 
-      // Update parent component with the new R2 public URL
-      onChange(data.url);
+      // Update parent component with the new R2 public URL (and object key)
+      onChange(data.url, data.key);
     } catch (err: any) {
       console.error("Upload error:", err);
       setError(err?.message || "An error occurred while uploading to Cloudflare R2.");

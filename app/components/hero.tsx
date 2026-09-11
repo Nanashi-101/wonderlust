@@ -138,8 +138,8 @@ export default function Hero() {
         </a>
       </motion.div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 text-white/80">
+      {/* Scroll Indicator — sits left of the floating chat launcher (bottom-8 right-8) */}
+      <div className="absolute bottom-11 right-26 text-white/80">
         {" "}
         <Link
           href="#about"

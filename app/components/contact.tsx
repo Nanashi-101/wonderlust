@@ -24,12 +24,14 @@ import {
   ChevronDown,
   Check,
   Building,
+  ArrowRight,
 } from "lucide-react";
 import {
   createInquiryAction,
   deleteInquiryAction,
   getInquiriesByIdsAction,
 } from "@/lib/actions/inquiries";
+import { Link } from "@/i18n/navigation";
 
 interface InquiryRecord {
   id: string;
@@ -378,6 +380,26 @@ export default function Contact() {
           <p className="text-lg text-neutral-600 leading-relaxed font-normal">
             {t("subtitle")}
           </p>
+
+          {/* Nudge toward the AI planner for visitors who haven't picked a place yet */}
+          <Link
+            href="/plan"
+            className="group mt-8 flex items-center gap-4 rounded-2xl border border-cyan-100 bg-gradient-to-r from-cyan-50 via-white to-white p-4 pr-5 transition-all hover:border-cyan-300 hover:shadow-lg hover:shadow-cyan-500/10"
+          >
+            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cyan-500 text-white">
+              <span className="absolute inset-0 rounded-xl bg-cyan-400 opacity-30 animate-ping" />
+              <Sparkles className="relative h-5 w-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold text-neutral-900">{t("aiTitle")}</span>
+              <span className="block text-sm leading-relaxed text-neutral-600">{t("aiBody")}</span>
+            </span>
+            <span className="hidden shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-neutral-900 px-4 py-2 text-sm font-semibold text-white transition-colors group-hover:bg-cyan-600 sm:inline-flex">
+              {t("aiCta")}
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+            <ArrowRight className="h-5 w-5 shrink-0 text-cyan-600 sm:hidden" />
+          </Link>
         </div>
 
         {/* ────────────────────────────────────────────────────────── */}

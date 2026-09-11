@@ -1,4 +1,5 @@
 import About from "../components/about";
+import AdvertisementsGallery from "../components/advertisementsGallery";
 import Contact from "../components/contact";
 import Destinations from "../components/destination";
 import ExperiencePause from "../components/experiencePause";
@@ -18,6 +19,7 @@ export default function Home() {
       <Destinations/>
       <ExperiencePause/>
       <FeaturedPackages/>
+      <AdvertisementsGallery/>
       <Contact/>
       <Footer/>
     </div>

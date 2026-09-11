@@ -12,6 +12,11 @@ function getRedis(): Redis | null {
   return redisClient;
 }
 
+/** Whether Upstash credentials are present, i.e. limits actually enforce. */
+export function isRateLimitConfigured(): boolean {
+  return getRedis() !== null;
+}
+
 const limiters = new Map<string, Ratelimit>();
 
 function getLimiter(key: string, limit: number, windowSec: number): Ratelimit | null {
@@ -66,10 +71,10 @@ export async function checkRateLimit(
 }
 
 /** Builds a `Retry-After`-bearing 429 for a failed checkRateLimit() result. */
-export function rateLimitResponse(result: RateLimitResult): Response {
+export function rateLimitResponse(result: RateLimitResult, error = "RATE_LIMITED"): Response {
   const retryAfterSec = Math.max(1, Math.ceil((result.reset - Date.now()) / 1000));
   return Response.json(
-    { error: "RATE_LIMITED" },
+    { error },
     { status: 429, headers: { "Retry-After": String(retryAfterSec) } }
   );
 }

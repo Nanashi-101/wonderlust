@@ -1,3 +1,8 @@
 {
-  "cSpell.words": ["gsap", "Ladakh", "Manali"]
+  "cSpell.words": [
+    "gsap",
+    "Ladakh",
+    "Manali"
+  ],
+  "makefile.configureOnOpen": false
 }
